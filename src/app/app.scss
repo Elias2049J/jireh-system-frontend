@@ -1,0 +1,21 @@
+.app-container {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+
+.content-wrapper {
+  max-width: 100%;
+  margin: 0 auto;
+  text-align: center;
+
+  h1 {
+    color: gray;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    color: gray;
+    font-size: 1.2rem;
+  }
+}
