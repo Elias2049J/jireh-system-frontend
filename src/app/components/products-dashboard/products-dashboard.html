@@ -1,16 +1,20 @@
-<div class="mdashboard-container">
-  <div class="menu-container">
-    <app-menubar></app-menubar>
-  </div>
+<div class="main-container">
   <div class="search-container">
     <app-search></app-search>
   </div>
   <div class="table-container">
-    <app-table></app-table>
+    <app-table [columns]="columns" [dataSource]="products$ | async"></app-table>
   </div>
   <div class="btn-container">
-    <button class="btn add">Nuevo Producto</button>
-    <button class="btn edit">Editar Producto</button>
+    <button (click)="handleAction('add')" class="btn add">Nuevo Producto</button>
+    <button (click)="handleAction('edit')" class="btn edit">Editar Producto</button>
     <button class="btn delete">Eliminar Producto</button>
+    <button class="btn back"><a [routerLink]="['/menus']" routerLinkActive="active" class="sidebar-link">Volver Atrás</a></button>
   </div>
+  @if (actionType === 'add') {
+    <app-product-form (dataEntered)="createProduct($event)" actionType="add"></app-product-form>
+  }
+  @if (actionType === 'edit') {
+    <app-product-form > <!--(dataEntered)="editProduct($event)" actionType="edit"--></app-product-form>
+  }
 </div>

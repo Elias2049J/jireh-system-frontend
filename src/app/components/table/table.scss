@@ -1,18 +1,25 @@
-.data-table {
-  width: 100%;
+.table-container {
+  width: 90%;
   height: 100%;
-  max-width: 70vw;
-  border: 1px solid black;
-  border-collapse: collapse;
-  text-align: center;
 
   th {
     border: inherit;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: left;
   }
 
   td {
     border: inherit;
     padding: 0.5rem;
-    text-align: center;
+    font-size: 1.5rem;
   }
+}
+
+.pag-container {
+  display: block;
+  position: fixed;
+  right: 16vw;
+  bottom: 10vh;
+  background: white;
 }

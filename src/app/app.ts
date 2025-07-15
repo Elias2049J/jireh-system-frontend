@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Sidebar } from './components/sidebar/sidebar';
-import { Menudashboard } from "./components/menudashboard/menudashboard";
+import { ProductsDashboard } from "./components/products-dashboard/products-dashboard";
+import { Header } from './components/header/header';
+import {MenusDashboard} from './components/menus-dashboard/menus-dashboard';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Sidebar, Menudashboard],
+  imports: [RouterOutlet, Sidebar, Header],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

@@ -1,7 +1,11 @@
 import { Routes } from '@angular/router';
-import { Menudashboard } from './components/menudashboard/menudashboard';
+import { ProductsDashboard } from './components/products-dashboard/products-dashboard';
+import {MenusDashboard} from './components/menus-dashboard/menus-dashboard';
+import {LoginForm} from './components/login/login-form';
 
 export const routes: Routes = [
-  {path: 'menudashboard', component: Menudashboard},
-  {path: '', redirectTo: 'menudashboard', pathMatch: 'full'}
+  {path: '', redirectTo: 'menus', pathMatch: 'full'},
+  {path: 'menu/:idMenu/products', component: ProductsDashboard},
+  {path: 'login', component: LoginForm},
+  {path: 'menus', component: MenusDashboard}
 ];

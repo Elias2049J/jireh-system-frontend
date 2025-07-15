@@ -1,0 +1,26 @@
+<div class="main-container">
+  <div class="btn-container">
+    <button class="btn">Ver todos los platos</button>
+    <button (click)="showForm = true" class="btn">Añadir Menú</button>
+    <button class="btn">Eliminar Menú</button>
+  </div>
+  @if (showForm) {
+    <app-menu-form
+      (nameEntered)="onNameEntered($event)">
+    </app-menu-form>
+  }
+  <div class="cards-container">
+    @if (menus$ | async; as menus) {
+      @for (menu of menus; track menu.idMenu) {
+        <div>
+          <p>{{ menu.idMenu }} - {{ menu.name.toLocaleUpperCase() }}</p>
+          <div class="menu-card">
+            <a [routerLink]="['/menu', menu.idMenu, 'products']"><img src="" alt="{{menu.name}}"></a>
+          </div>
+        </div>
+      }
+    } @else {
+      <p>Aun no hay menus</p>
+    }
+  </div>
+</div>

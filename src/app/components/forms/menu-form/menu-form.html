@@ -1,0 +1,16 @@
+<div class="main-container">
+  <form>
+    <label class="lbl" for="name">Nombre del menú</label>
+    <input class="input" id="name" type="text" [formControl]="menuNameControl" autocomplete="off">
+    <button (click)="emitName()" class="btn" type="button">Aceptar</button>
+    @if (menuNameControl.hasError('minlength')) {
+      <p class="err">El nombre debe tener más de 3 letras.</p>
+    }
+    @if (menuNameControl.hasError('maxlength')) {
+      <p class="err">El nombre debe tener menos de 20 letras.</p>
+    }
+    @if (menuNameControl.hasError('required')) {
+      <p class="err">Completa el campo</p>
+    }
+  </form>
+</div>

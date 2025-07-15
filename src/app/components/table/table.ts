@@ -1,27 +1,31 @@
-import { Component } from '@angular/core';
+import {Component, Input, ViewChild} from '@angular/core';
+import {MatTableDataSource, MatTableModule} from '@angular/material/table';
+import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
+import {MatSort, MatSortModule} from '@angular/material/sort';
 
 @Component({
   selector: 'app-table',
-  imports: [],
+  imports: [MatTableModule, MatPaginatorModule, MatSortModule
+  ],
   templateUrl: './table.html',
   styleUrl: './table.scss'
 })
 export class Table {
-  products: any[] = [];
-  sortField: string = '';
-  sortAsc: boolean = true;
+  @Input() columns: { field: string, header: string} [] = [];
+  @Input() set dataSource(data: any[] | null) {
+    this.dataSourceInstance.data = data ?? [];
+  }
+  dataSourceInstance = new MatTableDataSource<any>([]);
 
-  orderBy(field: string) {
-    if (this.sortField === field) {
-      this.sortAsc = !this.sortAsc;
-    } else {
-      this.sortField = field;
-      this.sortAsc = true;
-    }
-    this.products.sort((a, b) => {
-      if (a[field] < b[field]) return this.sortAsc ? -1 : 1;
-      if (a[field] > b[field]) return this.sortAsc ? 1 : -1;
-      return 0;
-    })
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+
+  get displayedColumns(): string[] {
+    return this.columns.map(col => col.field);
+  }
+
+  ngAfterViewInit() {
+    this.dataSourceInstance.paginator = this.paginator;
+    this.dataSourceInstance.sort = this.sort;
   }
 }

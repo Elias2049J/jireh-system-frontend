@@ -1,11 +1,16 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
+import { TitleService } from '../../services/title-service';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-header',
-  imports: [],
+  imports: [AsyncPipe],
   templateUrl: './header.html',
   styleUrl: './header.scss'
 })
 export class Header {
-  @Input() title = '';
+  title$;
+  constructor(private titleService: TitleService) {
+    this.title$ = this.titleService.title$;
+   }
 }

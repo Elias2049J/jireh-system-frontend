@@ -1,0 +1,32 @@
+<div class="main-container">
+  <form>
+    <label class="lbl" for="name">Nombre del producto</label>
+    <input class="input" id="name" type="text" [formControl]="productDescControl" autocomplete="off">
+    <label class="lbl" for="price">Precio</label>
+    @if (actionType === 'edit') {
+      <label for="available">Producto Disponible?</label>
+      <select name="available" id="sel" required>
+        <option value="true">SI</option>
+        <option value="false">NO</option>
+      </select>
+    }
+    <input class="input" id="price" type="number" step="any" [formControl]="productPriceControl" autocomplete="off">
+    <button (click)="emitData()" class="btn" type="button">Aceptar</button>
+    @if (productDescControl.hasError('minlength')) {
+      <p class="err">La Descripcion debe ser más larga.</p>
+    }
+    @if (productDescControl.hasError('maxlength')) {
+      <p class="err">La descripción debe ser más corta.</p>
+    }
+    @if (productDescControl.hasError('required')) {
+      <p class="err">Completa el campo descripcion</p>
+    }
+    @if (productPriceControl.hasError('required')) {
+      <p class="err">Completa el campo precio</p>
+    }
+    @if (productPriceControl.hasError('min')) {
+      <p class="err">El precio debe ser mayor que 0</p>
+    }
+  </form>
+</div>
+
