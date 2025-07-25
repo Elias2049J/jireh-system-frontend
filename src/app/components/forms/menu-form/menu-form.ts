@@ -11,6 +11,7 @@ import {FormControl, FormsModule, ReactiveFormsModule, Validators} from '@angula
   styleUrl: './menu-form.scss'
 })
 export class MenuForm {
+  @Output() exitEvent = new EventEmitter();
   @Output() nameEntered = new EventEmitter<string>();
   menuNameControl = new FormControl('', [
     Validators.required,
@@ -22,5 +23,9 @@ export class MenuForm {
   //emits the name entered to his father component
   emitName(): void {
     this.nameEntered.emit(this.menuNameControl.value ?? '')
+  }
+
+  emitExitEvent(): void {
+    this.exitEvent.emit(true);
   }
 }

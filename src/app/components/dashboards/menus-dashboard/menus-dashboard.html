@@ -6,7 +6,8 @@
   </div>
   @if (showForm) {
     <app-menu-form
-      (nameEntered)="onNameEntered($event)">
+      (nameEntered)="onNameEntered($event)"
+      (exitEvent)="showForm=false">
     </app-menu-form>
   }
   <div class="cards-container">

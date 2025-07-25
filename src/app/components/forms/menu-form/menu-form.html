@@ -1,4 +1,12 @@
-<div class="main-container">
+<div class="overlay"></div>
+
+<div class="form-container">
+  <div class="form-title">Ingrese datos del menú</div>
+  <div class="exit-container">
+    <button (click)="emitExitEvent()" class="btn exit">
+      x
+    </button>
+  </div>
   <form>
     <label class="lbl" for="name">Nombre del menú</label>
     <input class="input" id="name" type="text" [formControl]="menuNameControl" autocomplete="off">

@@ -1,17 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { Menubar } from '../menubar/menubar';
-import { Table } from '../table/table';
-import { Search } from '../search/search';
-import {Product} from '../../models/product.model';
-import {ProductService} from '../../services/product-service';
-import {ProductForm} from '../forms/product-form/product-form';
+import { Table } from '../../table/table';
+import { Search } from '../../search/search';
+import {Product} from '../../../models/product.model';
+import {ProductService} from '../../../services/product-service';
+import {ProductForm} from '../../forms/product-form/product-form';
 import {ActivatedRoute, RouterLink, RouterLinkActive} from '@angular/router';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {AsyncPipe} from '@angular/common';
 
 @Component({
   selector: 'app-products-dashboard',
-  imports: [Menubar, Search, Table, ProductForm, AsyncPipe, RouterLink, RouterLinkActive],
+  imports: [Search, Table, ProductForm, AsyncPipe, RouterLink, RouterLinkActive],
   templateUrl: './products-dashboard.html',
   styleUrl: './products-dashboard.scss'
 })

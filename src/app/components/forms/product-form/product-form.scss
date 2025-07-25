@@ -1,4 +1,4 @@
-.main-container {
+.form-container {
   position: fixed;
   top: 0;
   left: 0;
@@ -50,4 +50,15 @@
   color: red;
   font-size: 1rem;
 }
+
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: rgba(15, 23, 42, 0.42);
+}
+
 

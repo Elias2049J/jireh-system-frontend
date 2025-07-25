@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {MenuService} from '../../services/menu-service';
-import {MenuForm} from '../forms/menu-form/menu-form';
+import {MenuService} from '../../../services/menu-service';
+import {MenuForm} from '../../forms/menu-form/menu-form';
 import {CommonModule} from '@angular/common';
-import {Menu} from '../../models/menu.model';
+import {Menu} from '../../../models/menu.model';
 import {RouterLink} from '@angular/router';
 import {BehaviorSubject} from 'rxjs';
 

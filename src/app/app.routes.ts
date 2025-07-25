@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import { ProductsDashboard } from './components/products-dashboard/products-dashboard';
-import {MenusDashboard} from './components/menus-dashboard/menus-dashboard';
+import { ProductsDashboard } from './components/dashboards/products-dashboard/products-dashboard';
+import {MenusDashboard} from './components/dashboards/menus-dashboard/menus-dashboard';
 import {LoginForm} from './components/login/login-form';
 
 export const routes: Routes = [

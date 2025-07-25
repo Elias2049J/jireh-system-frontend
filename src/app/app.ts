@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Sidebar } from './components/sidebar/sidebar';
-import { ProductsDashboard } from "./components/products-dashboard/products-dashboard";
+import { ProductsDashboard } from "./components/dashboards/products-dashboard/products-dashboard";
 import { Header } from './components/header/header';
-import {MenusDashboard} from './components/menus-dashboard/menus-dashboard';
+import {MenusDashboard} from './components/dashboards/menus-dashboard/menus-dashboard';
 
 @Component({
   selector: 'app-root',
