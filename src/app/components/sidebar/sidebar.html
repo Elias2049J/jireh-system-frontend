@@ -1,12 +1,12 @@
-<nav class="sidebar">
-  <div class="sidebar-header">
-    <h2>Navegación</h2>
+<nav class="bg-dark text-white h-100 d-flex flex-column">
+  <div class="p-3 border-bottom border-secondary">
+    <h2 class="h4 mb-0 text-center">Navegación</h2>
   </div>
-  <ul class="sidebar-menu">
-    <li><a routerLink="login" routerLinkActive="active" class="sidebar-link" (click)="setTitle('Hacer un Pedido')" >Pedido</a></li>
-    <li><a routerLink="" routerLinkActive="active" class="sidebar-link" (click)="setTitle('Administrar Caja')">Caja</a></li>
-    <li><a routerLink="" routerLinkActive="active" class="sidebar-link" (click)="setTitle('Administrar Pagos')">Pagos</a></li>
-    <li><a routerLink="menus" routerLinkActive="active" class="sidebar-link" (click)="setTitle('Platos a la Carta')">Carta</a></li>
+  <ul class="nav flex-column p-0 m-0">
+    <li class="nav-item text-center"><a routerLink="login" routerLinkActive="active" class="nav-link text-white py-3 px-3" (click)="setTitle('Hacer un Pedido')">Pedido</a></li>
+    <li class="nav-item text-center"><a routerLink="" routerLinkActive="active" class="nav-link text-white py-3 px-3" (click)="setTitle('Administrar Caja')">Caja</a></li>
+    <li class="nav-item text-center"><a routerLink="" routerLinkActive="active" class="nav-link text-white py-3 px-3" (click)="setTitle('Administrar Pagos')">Pagos</a></li>
+    <li class="nav-item text-center"><a routerLink="menus" routerLinkActive="active" class="nav-link text-white py-3 px-3" (click)="setTitle('Platos a la Carta')">Carta</a></li>
   </ul>
-  <div class="sidebar-footer">© 2025 Jireh</div>
+  <div class="mt-auto p-3 text-center border-top border-secondary small">© 2025 Jireh</div>
 </nav>

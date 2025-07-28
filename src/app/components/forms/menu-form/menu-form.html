@@ -1,24 +1,28 @@
-<div class="overlay"></div>
+<div class="modal-backdrop fade show"></div>
 
-<div class="form-container">
-  <div class="form-title">Ingrese datos del menú</div>
-  <div class="exit-container">
-    <button (click)="emitExitEvent()" class="btn exit">
-      x
-    </button>
+<div class="modal d-block">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Ingrese datos del menú</h5>
+        <button type="button" class="btn-close" (click)="emitExitEvent()"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <label class="form-label" for="name">Nombre del menú</label>
+          <input class="form-control mb-3" id="name" type="text" [formControl]="menuNameControl" autocomplete="off">
+          <button (click)="emitName()" class="btn btn-primary w-100" type="button">Aceptar</button>
+          @if (menuNameControl.hasError('minlength')) {
+            <p class="text-danger small mt-2">El nombre debe tener más de 3 letras.</p>
+          }
+          @if (menuNameControl.hasError('maxlength')) {
+            <p class="text-danger small mt-2">El nombre debe tener menos de 20 letras.</p>
+          }
+          @if (menuNameControl.hasError('required')) {
+            <p class="text-danger small mt-2">Completa el campo</p>
+          }
+        </form>
+      </div>
+    </div>
   </div>
-  <form>
-    <label class="lbl" for="name">Nombre del menú</label>
-    <input class="input" id="name" type="text" [formControl]="menuNameControl" autocomplete="off">
-    <button (click)="emitName()" class="btn" type="button">Aceptar</button>
-    @if (menuNameControl.hasError('minlength')) {
-      <p class="err">El nombre debe tener más de 3 letras.</p>
-    }
-    @if (menuNameControl.hasError('maxlength')) {
-      <p class="err">El nombre debe tener menos de 20 letras.</p>
-    }
-    @if (menuNameControl.hasError('required')) {
-      <p class="err">Completa el campo</p>
-    }
-  </form>
 </div>

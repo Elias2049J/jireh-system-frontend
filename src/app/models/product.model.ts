@@ -1,9 +1,9 @@
 export class Product {
   constructor(
-    id: number,
-    desc: string,
-    price: number,
-    available: boolean,
-    idMenu: number
+    public id: number | null,
+    public desc: string,
+    public price: number,
+    public available: boolean,
+    public idMenu: number | null
   ) {}
 }

@@ -1,33 +1,39 @@
-<div class="overlay"></div>
-<div class="form-container">
-  <form>
-    <label class="lbl" for="name">Nombre del producto</label>
-    <input class="input" id="name" type="text" [formControl]="productDescControl" autocomplete="off">
-    <label class="lbl" for="price">Precio</label>
-    @if (actionType === 'edit') {
-      <label for="available">Producto Disponible?</label>
-      <select name="available" id="sel" required>
-        <option value="true">SI</option>
-        <option value="false">NO</option>
-      </select>
-    }
-    <input class="input" id="price" type="number" step="any" [formControl]="productPriceControl" autocomplete="off">
-    <button (click)="emitData()" class="btn" type="button">Aceptar</button>
-    @if (productDescControl.hasError('minlength')) {
-      <p class="err">La Descripcion debe ser más larga.</p>
-    }
-    @if (productDescControl.hasError('maxlength')) {
-      <p class="err">La descripción debe ser más corta.</p>
-    }
-    @if (productDescControl.hasError('required')) {
-      <p class="err">Completa el campo descripcion</p>
-    }
-    @if (productPriceControl.hasError('required')) {
-      <p class="err">Completa el campo precio</p>
-    }
-    @if (productPriceControl.hasError('min')) {
-      <p class="err">El precio debe ser mayor que 0</p>
-    }
-  </form>
-</div>
+<div class="modal-backdrop fade show"></div>
 
+<div class="modal d-block">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+        <form>
+          <label class="form-label" for="name">Nombre del producto</label>
+          <input class="form-control mb-3" id="name" type="text" [formControl]="productDescControl" autocomplete="off">
+          <label class="form-label" for="price">Precio</label>
+          @if (actionType === 'edit') {
+            <label class="form-label" for="available">Producto Disponible?</label>
+            <select class="form-select mb-3" name="available" id="available" required>
+              <option value="true">SI</option>
+              <option value="false">NO</option>
+            </select>
+          }
+          <input class="form-control mb-3" id="price" type="number" step="any" [formControl]="productPriceControl" autocomplete="off">
+          <button (click)="emitData()" class="btn btn-primary w-100" type="button">Aceptar</button>
+          @if (productDescControl.hasError('minlength')) {
+            <p class="text-danger small mt-2">La Descripcion debe ser más larga.</p>
+          }
+          @if (productDescControl.hasError('maxlength')) {
+            <p class="text-danger small mt-2">La descripción debe ser más corta.</p>
+          }
+          @if (productDescControl.hasError('required')) {
+            <p class="text-danger small mt-2">Completa el campo descripcion</p>
+          }
+          @if (productPriceControl.hasError('required')) {
+            <p class="text-danger small mt-2">Completa el campo precio</p>
+          }
+          @if (productPriceControl.hasError('min')) {
+            <p class="text-danger small mt-2">El precio debe ser mayor que 0</p>
+          }
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

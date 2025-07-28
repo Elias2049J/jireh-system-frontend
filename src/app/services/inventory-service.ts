@@ -25,15 +25,15 @@ export class InventoryService {
   }
 
   getSupplyById(id: number): Observable<SupplyModel> {
-    return this.http.get<SupplyModel>(`${this.apiUrl}/insumo/${id}`);
+    return this.http.get<SupplyModel>(`${this.apiUrl}/insumos/${id}`);
   }
 
   getSupplyByName(name: string): Observable<SupplyModel> {
-    return this.http.get<SupplyModel>(`${this.apiUrl}/name/${name}`);
+    return this.http.get<SupplyModel>(`${this.apiUrl}/insumos/${name}`);
   }
 
   deleteSupply(id: number): Observable<boolean> {
-    return this.http.delete<boolean>(`${this.apiUrl}/${id}`);
+    return this.http.delete<boolean>(`${this.apiUrl}/insumos/${id}/delete`);
   }
 
   // lots management methods

@@ -26,4 +26,17 @@ export class ProductService {
     const url = this.apiUrl + "/create";
     return this.http.post<boolean>(url, product);
   }
+
+  delete(id: number | null): Observable<boolean> {
+    if (id === null) {
+      throw new Error("No se puede eliminar un producto con ID nulo");
+    }
+    const url = this.apiUrl + "/delete/" + id;
+    return this.http.delete<boolean>(url);
+  }
+
+  update(product: Product): Observable<boolean> {
+    const url = this.apiUrl + "/update";
+    return this.http.put<boolean>(url, product);
+  }
 }

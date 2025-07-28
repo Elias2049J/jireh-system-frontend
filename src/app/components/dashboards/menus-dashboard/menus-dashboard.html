@@ -1,8 +1,12 @@
-<div class="main-container">
-  <div class="btn-container">
-    <button class="btn">Ver todos los platos</button>
-    <button (click)="showForm = true" class="btn">Añadir Menú</button>
-    <button class="btn">Eliminar Menú</button>
+<div class="container-fluid mt-4">
+  <div class="row mb-4">
+    <div class="col-12 text-center">
+      <div class="btn-group">
+        <button class="btn btn-primary mx-2">Ver todos los platos</button>
+        <button (click)="showForm = true" class="btn btn-success mx-2">Añadir Menú</button>
+        <button class="btn btn-danger mx-2">Eliminar Menú</button>
+      </div>
+    </div>
   </div>
   @if (showForm) {
     <app-menu-form
@@ -10,18 +14,24 @@
       (exitEvent)="showForm=false">
     </app-menu-form>
   }
-  <div class="cards-container">
+  <div class="row row-cols-1 row-cols-md-3 g-4">
     @if (menus$ | async; as menus) {
       @for (menu of menus; track menu.idMenu) {
-        <div>
-          <p>{{ menu.idMenu }} - {{ menu.name.toLocaleUpperCase() }}</p>
-          <div class="menu-card">
-            <a [routerLink]="['/menu', menu.idMenu, 'products']"><img src="" alt="{{menu.name}}"></a>
+        <div class="col">
+          <div class="card h-100">
+            <div class="card-body">
+              <h5 class="card-title">{{ menu.idMenu }} - {{ menu.name.toLocaleUpperCase() }}</h5>
+              <a [routerLink]="['/menu', menu.idMenu, 'products']" class="stretched-link">
+                <img src="" class="card-img-bottom" alt="{{menu.name}}">
+              </a>
+            </div>
           </div>
         </div>
       }
     } @else {
-      <p>Aun no hay menus</p>
+      <div class="col-12 text-center">
+        <p class="text-muted">Aun no hay menus</p>
+      </div>
     }
   </div>
 </div>

@@ -37,3 +37,4 @@ export class ProductForm {
     this.dataEntered.emit(data);
   }
 }
+

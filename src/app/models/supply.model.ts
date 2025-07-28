@@ -1,9 +1,10 @@
 export class SupplyModel {
   constructor(
-    name: string,
-    description:string,
-    unitCost: number,
-    unit: string,
-    stock: number
+    public id: number | null,
+    public name: string,
+    public description:string,
+    public unitCost: number,
+    public unit: string,
+    public stock: number
   ) {}
 }

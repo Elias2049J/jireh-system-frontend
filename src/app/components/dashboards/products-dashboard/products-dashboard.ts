@@ -1,16 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { Table } from '../../table/table';
 import { Search } from '../../search/search';
 import {Product} from '../../../models/product.model';
 import {ProductService} from '../../../services/product-service';
 import {ProductForm} from '../../forms/product-form/product-form';
 import {ActivatedRoute, RouterLink, RouterLinkActive} from '@angular/router';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {AsyncPipe} from '@angular/common';
+import {AsyncPipe, CommonModule} from '@angular/common';
 
 @Component({
   selector: 'app-products-dashboard',
-  imports: [Search, Table, ProductForm, AsyncPipe, RouterLink, RouterLinkActive],
+  imports: [Search, ProductForm, AsyncPipe, RouterLink, RouterLinkActive, CommonModule],
   templateUrl: './products-dashboard.html',
   styleUrl: './products-dashboard.scss'
 })
@@ -20,7 +19,7 @@ export class ProductsDashboard implements OnInit{
 
   products$: Observable<Product[]> = this._products.asObservable();
   showForm: boolean = false;
-  actionType: 'add' | 'edit' | null = null;
+  actionType: 'add' | 'edit' | 'delete' | null = null;
 
   constructor(
     private productService: ProductService,
@@ -32,7 +31,7 @@ export class ProductsDashboard implements OnInit{
 
   ngOnInit(): void {
     this.loadProducts();
-    }
+  }
 
   columns = [
     { field: 'id', header: 'Codigo' },
@@ -40,8 +39,9 @@ export class ProductsDashboard implements OnInit{
     { field: 'price', header: 'Precio' },
     { field: 'available', header: 'Disponible' }
   ];
+
   //sets an actionType to an action
-  handleAction(type: 'add' | 'edit') {
+  handleAction(type: 'add' | 'edit' | 'delete') {
     this.actionType = type;
     this.showForm = true;
   }
@@ -51,7 +51,7 @@ export class ProductsDashboard implements OnInit{
     this.showForm = false;
     this.actionType = null;
     console.log(productData);
-    const newProd = {id: null as any, desc: productData['desc'], price: parseFloat(productData['price']), available: undefined, idMenu: this.idMenu};
+    const newProd = {id: null as any, desc: productData['desc'], price: parseFloat(productData['price']), available: true, idMenu: parseInt(this.idMenu as any)};
     console.log(newProd);
     this.productService.create(newProd).subscribe({
       next: (createdProd) => {
@@ -79,5 +79,14 @@ export class ProductsDashboard implements OnInit{
     } else {
       console.error("Id menu is null at: loadProducts");
     }
+  }
+
+  deleteProduct(item: Product) {
+
+  }
+  //todo
+  updateProduct() {
+    this.showForm = false;
+    this.actionType = null;
   }
 }
