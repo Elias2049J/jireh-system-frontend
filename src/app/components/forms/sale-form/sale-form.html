@@ -1,1 +1,51 @@
-<p>sale-form works!</p>
+<div class="modal-backdrop fade show"></div>
+
+<div class="modal d-block">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          {{ actionType === 'add' ? 'Registrar Venta' : 'Editar Venta' }}
+        </h5>
+        <button type="button" class="btn-close" (click)="emitExitEvent()"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="saleForm">
+          <div class="mb-3">
+            <label for="totalPay" class="form-label">Monto del ticket</label>
+            <input
+              type="number"
+              class="form-control"
+              id="totalPay"
+              step="0.01"
+              formControlName="totalPay"
+              [ngClass]="{'is-invalid': saleForm.get('totalPay')?.invalid && saleForm.get('totalPay')?.touched}"
+              autocomplete="off"
+            >
+            @if (saleForm.controls['totalPay'].hasError('required') && saleForm.controls['totalPay'].touched) {
+              <div class="invalid-feedback">El monto es obligatorio</div>
+            }
+            @if (saleForm.controls['totalPay'].hasError('min')) {
+              <div class="invalid-feedback">El monto debe ser mayor que 0</div>
+            }
+            @if (saleForm.controls['totalPay'].hasError('pattern')) {
+              <div class="invalid-feedback">El monto debe ser un número válido</div>
+            }
+          </div>
+
+          <div class="d-flex justify-content-end gap-2">
+            <button
+              type="button"
+              class="btn btn-primary"
+              (click)="emitData()"
+              [disabled]="saleForm.invalid"
+            >
+              {{ actionType === 'add' ? 'Registrar' : 'Actualizar' }}
+            </button>
+            <button type="button" class="btn btn-secondary" (click)="emitExitEvent()">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

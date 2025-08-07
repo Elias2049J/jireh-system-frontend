@@ -2,7 +2,7 @@
   <div class="row mb-4">
     <div class="col-12">
       <div class="d-flex align-items-center mb-3">
-        <input type="text" class="form-control me-2" placeholder="Buscar...">
+        <input type="text" class="form-control me-2" placeholder="Buscar ...">
         <button class="btn btn-primary">Buscar</button>
       </div>
     </div>
@@ -64,13 +64,21 @@
   </div>
   <div class="row pb-4 bg-light border-top pt-3">
     <div class="col-12 d-flex justify-content-center gap-3">
-      <button (click)="handleAction('add')" class="btn btn-success">Nuevo Producto</button>
+      <button (click)="handleAction('add')" class="btn btn-success">Registrar Insumo</button>
     </div>
   </div>
   @if (actionType === 'add') {
-    <app-supply-form (dataEntered)="regSupply($event)" actionType="add"></app-supply-form>
+    <app-supply-form
+      (dataEntered)="regSupply($event)"
+      (cancelled)="cancelAction()"
+      actionType="add">
+    </app-supply-form>
   }
   @if (actionType === 'edit') {
-    <app-supply-form (dataEntered)="updateSupply($event)" actionType="edit"></app-supply-form>
+    <app-supply-form
+      (dataEntered)="updateSupply($event)"
+      (cancelled)="cancelAction()"
+      actionType="edit">
+    </app-supply-form>
   }
 </div>

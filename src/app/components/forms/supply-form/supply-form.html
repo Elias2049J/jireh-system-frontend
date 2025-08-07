@@ -3,35 +3,104 @@
 <div class="modal d-block">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          {{ actionType === 'add' ? 'Nuevo Insumo' : 'Editar Insumo' }}
+        </h5>
+        <button type="button" class="btn-close" (click)="cancel()"></button>
+      </div>
       <div class="modal-body">
-        <form>
-          <label class="form-label" for="name">Nombre del producto</label>
-          <input class="form-control mb-3" id="name" type="text" [formControl]="productDescControl" autocomplete="off">
-          <label class="form-label" for="price">Precio</label>
-          @if (actionType === 'edit') {
-            <label class="form-label" for="available">Producto Disponible?</label>
-            <select class="form-select mb-3" name="available" id="available" required>
-              <option value="true">SI</option>
-              <option value="false">NO</option>
+        <form [formGroup]="supplyForm">
+          <div class="mb-3">
+            <label for="name" class="form-label">Nombre</label>
+            <input
+              type="text"
+              class="form-control"
+              id="name"
+              formControlName="name"
+              [ngClass]="{'is-invalid': supplyForm.get('name')?.invalid && supplyForm.get('name')?.touched}"
+            >
+            @if (supplyForm.controls['name'].hasError('required') && supplyForm.controls['name'].touched) {
+              <div class="invalid-feedback">El nombre es obligatorio</div>
+            }
+            @if (supplyForm.controls['name'].hasError('minlength')) {
+              <div class="invalid-feedback">El nombre debe tener al menos 3 caracteres</div>
+            }
+          </div>
+
+          <div class="mb-3">
+            <label for="description" class="form-label">Descripción</label>
+            <textarea
+              class="form-control"
+              id="description"
+              formControlName="description"
+              [ngClass]="{'is-invalid': supplyForm.get('description')?.invalid && supplyForm.get('description')?.touched}"
+            ></textarea>
+            @if (supplyForm.controls['description'].hasError('required') && supplyForm.controls['description'].touched) {
+              <div class="invalid-feedback">La descripción es obligatoria</div>
+            }
+          </div>
+
+          <div class="mb-3">
+            <label for="unitCost" class="form-label">Precio Unitario</label>
+            <input
+              type="number"
+              class="form-control"
+              id="unitCost"
+              formControlName="unitCost"
+              [ngClass]="{'is-invalid': supplyForm.get('unitCost')?.invalid && supplyForm.get('unitCost')?.touched}"
+            >
+            @if (supplyForm.controls['unitCost'].hasError('required') && supplyForm.controls['unitCost'].touched) {
+              <div class="invalid-feedback">El precio unitario es obligatorio</div>
+            }
+            @if (supplyForm.controls['unitCost'].hasError('min')) {
+              <div class="invalid-feedback">El precio debe ser mayor que 0</div>
+            }
+          </div>
+
+          <div class="mb-3">
+            <label for="unit" class="form-label">Unidad de Medida</label>
+            <select
+              class="form-select"
+              id="unit"
+              formControlName="unit"
+              [ngClass]="{'is-invalid': supplyForm.get('unit')?.invalid && supplyForm.get('unit')?.touched}"
+            >
+              <option value="">Seleccione una unidad</option>
+              <option value="kg">Kilogramos</option>
+              <option value="g">Gramos</option>
+              <option value="l">Litros</option>
+              <option value="ml">Mililitros</option>
+              <option value="unidad">Unidad</option>
             </select>
-          }
-          <input class="form-control mb-3" id="price" type="number" step="any" [formControl]="productPriceControl" autocomplete="off">
-          <button (click)="emitData()" class="btn btn-primary w-100" type="button">Aceptar</button>
-          @if (productDescControl.hasError('minlength')) {
-            <p class="text-danger small mt-2">La Descripcion debe ser más larga.</p>
-          }
-          @if (productDescControl.hasError('maxlength')) {
-            <p class="text-danger small mt-2">La descripción debe ser más corta.</p>
-          }
-          @if (productDescControl.hasError('required')) {
-            <p class="text-danger small mt-2">Completa el campo descripcion</p>
-          }
-          @if (productPriceControl.hasError('required')) {
-            <p class="text-danger small mt-2">Completa el campo precio</p>
-          }
-          @if (productPriceControl.hasError('min')) {
-            <p class="text-danger small mt-2">El precio debe ser mayor que 0</p>
-          }
+            @if (supplyForm.controls['unit'].hasError('required') && supplyForm.controls['unit'].touched) {
+              <div class="invalid-feedback">La unidad de medida es obligatoria</div>
+            }
+          </div>
+
+          <div class="mb-3">
+            <label for="stock" class="form-label">Cantidad en Stock</label>
+            <input
+              type="number"
+              class="form-control"
+              id="stock"
+              formControlName="stock"
+              [ngClass]="{'is-invalid': supplyForm.get('stock')?.invalid && supplyForm.get('stock')?.touched}"
+            >
+            @if (supplyForm.controls['stock'].hasError('required') && supplyForm.controls['stock'].touched) {
+              <div class="invalid-feedback">La cantidad es obligatoria</div>
+            }
+            @if (supplyForm.controls['stock'].hasError('min')) {
+              <div class="invalid-feedback">La cantidad no puede ser negativa</div>
+            }
+          </div>
+
+          <div class="d-flex justify-content-end gap-2">
+            <button type="button" class="btn btn-secondary" (click)="cancel()">Cancelar</button>
+            <button type="button" class="btn btn-primary" (click)="submit()" [disabled]="supplyForm.invalid">
+              {{ actionType === 'add' ? 'Registrar' : 'Actualizar' }}
+            </button>
+          </div>
         </form>
       </div>
     </div>

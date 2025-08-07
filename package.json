@@ -5,8 +5,36 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "electron": "npm run build && electron .",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
+  },
+  "main": "electron/main.js",
+  "build": {
+    "appId": "com.jireh.pos",
+    "productName": "Sistema-Jireh",
+    "directories": {
+      "output": "dist_electron"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*"
+    ],
+    "win": {
+      "icon": "build/icon.ico",
+      "target": "nsis"
+    },
+    "linux": {
+      "icon": "build/icon.png",
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    },
+    "mac": {
+      "icon": "build/icon.icns",
+      "target": "dmg"
+    }
   },
   "prettier": {
     "overrides": [
@@ -38,6 +66,8 @@
     "@angular/cli": "^20.0.5",
     "@angular/compiler-cli": "^20.0.0",
     "@types/jasmine": "~5.1.0",
+    "electron": "^37.2.6",
+    "electron-builder": "^26.0.12",
     "jasmine-core": "~5.7.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",

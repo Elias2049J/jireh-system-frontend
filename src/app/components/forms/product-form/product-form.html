@@ -3,35 +3,78 @@
 <div class="modal d-block">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          {{ actionType === 'add' ? 'Nuevo Producto' : 'Editar Producto' }}
+        </h5>
+        <button type="button" class="btn-close" (click)="cancel()"></button>
+      </div>
       <div class="modal-body">
-        <form>
-          <label class="form-label" for="name">Nombre del producto</label>
-          <input class="form-control mb-3" id="name" type="text" [formControl]="productDescControl" autocomplete="off">
-          <label class="form-label" for="price">Precio</label>
+        <form [formGroup]="productForm">
+          <div class="mb-3">
+            <label for="desc" class="form-label">Nombre del producto</label>
+            <input
+              type="text"
+              class="form-control"
+              id="desc"
+              formControlName="desc"
+              [ngClass]="{'is-invalid': productForm.get('desc')?.invalid && productForm.get('desc')?.touched}"
+            >
+            @if (productForm.controls['desc'].hasError('required') && productForm.controls['desc'].touched) {
+              <div class="invalid-feedback">La descripción es obligatoria</div>
+            }
+            @if (productForm.controls['desc'].hasError('minlength')) {
+              <div class="invalid-feedback">La descripción debe tener al menos 6 caracteres</div>
+            }
+            @if (productForm.controls['desc'].hasError('maxlength')) {
+              <div class="invalid-feedback">La descripción debe tener menos de 50 caracteres</div>
+            }
+            @if (productForm.controls['desc'].hasError('pattern')) {
+              <div class="invalid-feedback">La descripción solo puede contener letras y espacios</div>
+            }
+          </div>
+
+          <div class="mb-3">
+            <label for="price" class="form-label">Precio</label>
+            <input
+              type="number"
+              step="0.01"
+              class="form-control"
+              id="price"
+              formControlName="price"
+              [ngClass]="{'is-invalid': productForm.get('price')?.invalid && productForm.get('price')?.touched}"
+            >
+            @if (productForm.controls['price'].hasError('required') && productForm.controls['price'].touched) {
+              <div class="invalid-feedback">El precio es obligatorio</div>
+            }
+            @if (productForm.controls['price'].hasError('min')) {
+              <div class="invalid-feedback">El precio debe ser mayor que 0</div>
+            }
+            @if (productForm.controls['price'].hasError('pattern')) {
+              <div class="invalid-feedback">El precio debe ser un número válido</div>
+            }
+          </div>
+
           @if (actionType === 'edit') {
-            <label class="form-label" for="available">Producto Disponible?</label>
-            <select class="form-select mb-3" name="available" id="available" required>
-              <option value="true">SI</option>
-              <option value="false">NO</option>
-            </select>
+            <div class="mb-3">
+              <label for="available" class="form-label">Disponibilidad</label>
+              <select
+                class="form-select"
+                id="available"
+                formControlName="available"
+              >
+                <option [ngValue]="true">Disponible</option>
+                <option [ngValue]="false">No Disponible</option>
+              </select>
+            </div>
           }
-          <input class="form-control mb-3" id="price" type="number" step="any" [formControl]="productPriceControl" autocomplete="off">
-          <button (click)="emitData()" class="btn btn-primary w-100" type="button">Aceptar</button>
-          @if (productDescControl.hasError('minlength')) {
-            <p class="text-danger small mt-2">La Descripcion debe ser más larga.</p>
-          }
-          @if (productDescControl.hasError('maxlength')) {
-            <p class="text-danger small mt-2">La descripción debe ser más corta.</p>
-          }
-          @if (productDescControl.hasError('required')) {
-            <p class="text-danger small mt-2">Completa el campo descripcion</p>
-          }
-          @if (productPriceControl.hasError('required')) {
-            <p class="text-danger small mt-2">Completa el campo precio</p>
-          }
-          @if (productPriceControl.hasError('min')) {
-            <p class="text-danger small mt-2">El precio debe ser mayor que 0</p>
-          }
+
+          <div class="d-flex justify-content-end gap-2">
+            <button type="button" class="btn btn-secondary" (click)="cancel()">Cancelar</button>
+            <button type="button" class="btn btn-primary" (click)="submit()" [disabled]="productForm.invalid">
+              {{ actionType === 'add' ? 'Registrar' : 'Actualizar' }}
+            </button>
+          </div>
         </form>
       </div>
     </div>

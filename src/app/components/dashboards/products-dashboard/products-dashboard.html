@@ -64,9 +64,18 @@
     </div>
   </div>
   @if (actionType === 'add') {
-    <app-product-form (dataEntered)="createProduct($event)" actionType="add"></app-product-form>
+    <app-product-form
+      (dataEntered)="createProduct($event)"
+      (cancelled)="cancelAction()"
+      actionType="add">
+    </app-product-form>
   }
   @if (actionType === 'edit') {
-    <app-product-form > <!--(dataEntered)="editProduct($event)" actionType="edit"--></app-product-form>
+    <app-product-form
+      (dataEntered)="updateProduct($event)"
+      (cancelled)="cancelAction()"
+      actionType="edit"
+      [productData]="selectedProduct">
+    </app-product-form>
   }
 </div>

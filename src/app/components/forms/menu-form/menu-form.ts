@@ -1,31 +1,44 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {FormControl, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {CommonModule} from "@angular/common";
 
 @Component({
   selector: 'app-menu-form',
   imports: [
-    FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    CommonModule
   ],
   templateUrl: './menu-form.html',
   styleUrl: './menu-form.scss'
 })
-export class MenuForm {
-  @Output() exitEvent = new EventEmitter();
+export class MenuForm implements OnInit {
+  @Output() exitEvent = new EventEmitter<void>();
   @Output() nameEntered = new EventEmitter<string>();
-  menuNameControl = new FormControl('', [
-    Validators.required,
-    Validators.minLength(3),
-    Validators.maxLength(20),
-    Validators.pattern(/^[a-zA-Z\s]+$/)
-  ]);
 
-  //emits the name entered to his father component
+  menuForm: FormGroup;
+
+  constructor(private fb: FormBuilder) {
+    this.menuForm = this.fb.group({
+      name: ['', [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(20),
+        Validators.pattern(/^[a-zA-Z\s]+$/)
+      ]]
+    });
+  }
+
+  ngOnInit() {
+    // Inicialización adicional si es necesaria
+  }
+
   emitName(): void {
-    this.nameEntered.emit(this.menuNameControl.value ?? '')
+    if (this.menuForm.valid) {
+      this.nameEntered.emit(this.menuForm.get('name')?.value);
+    }
   }
 
   emitExitEvent(): void {
-    this.exitEvent.emit(true);
+    this.exitEvent.emit();
   }
 }

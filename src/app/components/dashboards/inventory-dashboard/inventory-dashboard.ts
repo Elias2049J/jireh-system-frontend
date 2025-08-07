@@ -11,7 +11,6 @@ import {SupplyForm} from '../../forms/supply-form/supply-form';
   selector: 'app-inventory-dashboard',
   imports: [
     AsyncPipe,
-    Search,
     SupplyForm
   ],
   templateUrl: './inventory-dashboard.html',
@@ -33,6 +32,12 @@ export class InventoryDashboard {
   handleAction(type: 'add' | 'edit' | 'delete') {
     this.actionType = type;
     this.showForm = true;
+  }
+
+  // Método para cancelar y cerrar el formulario
+  cancelAction(): void {
+    this.actionType = null;
+    this.showForm = false;
   }
 
   columns = [

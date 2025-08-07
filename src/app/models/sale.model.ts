@@ -1,6 +1,7 @@
 export class SaleModel {
   constructor(
-    totalAmount: number,
-    dateTime:string
+    public id: number,
+    public totalPay: number,
+    public dateTime:string
   ) {}
 }

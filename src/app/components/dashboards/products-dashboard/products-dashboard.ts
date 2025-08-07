@@ -20,6 +20,7 @@ export class ProductsDashboard implements OnInit{
   products$: Observable<Product[]> = this._products.asObservable();
   showForm: boolean = false;
   actionType: 'add' | 'edit' | 'delete' | null = null;
+  selectedProduct: Product | null = null;
 
   constructor(
     private productService: ProductService,
@@ -44,6 +45,13 @@ export class ProductsDashboard implements OnInit{
   handleAction(type: 'add' | 'edit' | 'delete') {
     this.actionType = type;
     this.showForm = true;
+  }
+
+  // Método para cancelar y cerrar el formulario
+  cancelAction(): void {
+    this.actionType = null;
+    this.showForm = false;
+    this.selectedProduct = null;
   }
 
   //creates a product using the productService method
@@ -82,11 +90,42 @@ export class ProductsDashboard implements OnInit{
   }
 
   deleteProduct(item: Product) {
-
+    if (confirm(`¿Está seguro de eliminar el producto: ${item.desc}?`)) {
+      this.productService.delete(item.id).subscribe({
+        next: () => {
+          console.info('Producto eliminado con éxito');
+          this.loadProducts();
+        },
+        error: (err) => {
+          console.error('Error al eliminar producto', err);
+        }
+      });
+    }
   }
-  //todo
-  updateProduct() {
-    this.showForm = false;
-    this.actionType = null;
+
+  updateProduct(productData?: any) {
+    if (productData) {
+      // Si recibimos datos del formulario, actualizamos el producto
+      const updatedProduct = {
+        ...productData,
+        id: this.selectedProduct?.id,
+        idMenu: parseInt(this.idMenu as any)
+      };
+
+      this.productService.update(updatedProduct).subscribe({
+        next: () => {
+          console.info('Producto actualizado con éxito');
+          this.loadProducts();
+          this.cancelAction();
+        },
+        error: (err) => {
+          console.error('Error al actualizar producto', err);
+        }
+      });
+    } else {
+      // Si no recibimos datos, simplemente preparamos para la edición
+      // En una implementación real, aquí se cargaría el producto seleccionado
+      // this.selectedProduct = productToEdit;
+    }
   }
 }
