@@ -1,5 +1,5 @@
-<div class="container-fluid mt-4 height: 100% position-relative overflow-hidden" >
-  <div class="row mb-3">
+<div class="container-fluid mt-2 position-relative overflow-hidden" >
+  <div class="row mb-1">
     <div class="container-fluid d-flex justify-content-between mb-2">
       <div>
         <button class="btn btn-success w-auto" (click)="handleAction('add')">Registrar venta</button>
@@ -16,29 +16,42 @@
       <h3>Historial de Ventas del día</h3>
     </div>
     <div class="col-12">
-      <div class="table-responsive">
+      <div class="table-responsive" style="height: 27rem; overflow-y: auto;">
         <table class="table table-striped table-bordered table-hover">
-          <thead class="table-dark">
+          <thead class="table-dark sticky-top">
           <tr>
             <th scope="col">ID Venta</th>
-            <th scope="col">Fecha y Hora</th>
-            <th scope="col">Monto Total</th>
+            <th scope="col">Hora</th>
+            <th scope="col">Monto</th>
           </tr>
           </thead>
           <tbody>
-          @for (sale of todaySales$ | async; track sale.id) {
-            <tr>
-              <td>{{ sale.id}}</td>
-              <td>{{ sale.dateTime}}</td>
-              <td>{{ sale.totalPay}}</td>
-            </tr>
+          @if (todaySales$ | async; as sales) {
+            @if (sales.length > 0) {
+              @for (sale of sales; track sale.id) {
+                <tr>
+                  <td>{{ sale.id}}</td>
+                  <td>{{ sale.dateTime.substring(11, 19) }}</td>
+                  <td>{{ sale.totalPay}}</td>
+                </tr>
+              }
+            } @else {
+              <tr>
+                <td colspan="3" class="text-center py-4 text-muted">
+                  <i class="bi bi-basket me-2"></i>Aún no hay ventas registradas hoy
+                </td>
+              </tr>
+            }
           }
-          <tr>
-            <th colspan="2" class="text-center">Total del día</th>
-            <td>{{totalAmountToday$ | async}}</td>
-          </tr>
           </tbody>
         </table>
+      </div>
+
+      <div class="card mt-3 bg-light">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <h5 class="card-title mb-0 fw-bold">Total del día:</h5>
+          <span class="fs-4 fw-bold text-success">{{totalAmountToday$ | async}}</span>
+        </div>
       </div>
     </div>
   </div>

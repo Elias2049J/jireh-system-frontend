@@ -10,7 +10,7 @@
         <button type="button" class="btn-close" (click)="emitExitEvent()"></button>
       </div>
       <div class="modal-body">
-        <form [formGroup]="saleForm">
+        <form [formGroup]="saleForm" (keydown.enter)="$event.preventDefault(); emitData()">
           <div class="mb-3">
             <label for="totalPay" class="form-label">Monto del ticket</label>
             <input
@@ -21,6 +21,7 @@
               formControlName="totalPay"
               [ngClass]="{'is-invalid': saleForm.get('totalPay')?.invalid && saleForm.get('totalPay')?.touched}"
               autocomplete="off"
+              (keydown.enter)="$event.preventDefault(); emitData()"
             >
             @if (saleForm.controls['totalPay'].hasError('required') && saleForm.controls['totalPay'].touched) {
               <div class="invalid-feedback">El monto es obligatorio</div>

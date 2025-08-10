@@ -5,6 +5,7 @@ import {SaleService} from '../../../services/sale-service';
 import {AsyncPipe} from '@angular/common';
 import {SaleForm} from '../../forms/sale-form/sale-form';
 import {ReportService} from '../../../services/report-service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-sale-dashboard',
@@ -76,9 +77,22 @@ export class SaleDashboard implements OnInit {
     this.saleService.openCash().subscribe({
       next: (result) => {
         console.info("Cash Open:", result);
+        Swal.fire({
+          title: '¡Caja Abierta!',
+          text: 'La caja ha sido abierta correctamente',
+          icon: 'success',
+          confirmButtonText: 'Aceptar',
+          confirmButtonColor: '#198754'
+        });
       },
       error: (err) => {
         console.error("Error opening cash", err);
+        Swal.fire({
+          title: 'Error',
+          text: 'No se pudo abrir la caja. Por favor, intente de nuevo.',
+          icon: 'error',
+          confirmButtonText: 'Aceptar'
+        });
       }
     });
   }
