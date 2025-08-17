@@ -29,42 +29,32 @@
           </div>
 
           <div class="mb-3">
-            <label for="description" class="form-label">Descripción</label>
-            <textarea
-              class="form-control"
-              id="description"
-              formControlName="description"
-              [ngClass]="{'is-invalid': supplyForm.get('description')?.invalid && supplyForm.get('description')?.touched}"
-            ></textarea>
-            @if (supplyForm.controls['description'].hasError('required') && supplyForm.controls['description'].touched) {
-              <div class="invalid-feedback">La descripción es obligatoria</div>
-            }
-          </div>
-
-          <div class="mb-3">
-            <label for="unitCost" class="form-label">Precio Unitario</label>
-            <input
-              type="number"
-              class="form-control"
-              id="unitCost"
-              formControlName="unitCost"
-              [ngClass]="{'is-invalid': supplyForm.get('unitCost')?.invalid && supplyForm.get('unitCost')?.touched}"
-            >
-            @if (supplyForm.controls['unitCost'].hasError('required') && supplyForm.controls['unitCost'].touched) {
-              <div class="invalid-feedback">El precio unitario es obligatorio</div>
-            }
-            @if (supplyForm.controls['unitCost'].hasError('min')) {
-              <div class="invalid-feedback">El precio debe ser mayor que 0</div>
-            }
-          </div>
-
-          <div class="mb-3">
-            <label for="unit" class="form-label">Unidad de Medida</label>
+            <label for="type" class="form-label">Tipo de Insumo</label>
             <select
               class="form-select"
-              id="unit"
-              formControlName="unit"
-              [ngClass]="{'is-invalid': supplyForm.get('unit')?.invalid && supplyForm.get('unit')?.touched}"
+              id="type"
+              formControlName="type"
+              [ngClass]="{'is-invalid': supplyForm.get('type')?.invalid && supplyForm.get('type')?.touched}"
+            >
+              <option value="">Seleccione un tipo</option>
+              <option value="INGREDIENT">Ingrediente</option>
+              <option value="UTENSIL">Utensilio</option>
+              <option value="CLEANING">Limpieza</option>
+              <option value="CONSUMABLE">Consumible</option>
+              <option value="TOOL">Herramienta</option>
+            </select>
+            @if (supplyForm.controls['type'].hasError('required') && supplyForm.controls['type'].touched) {
+              <div class="invalid-feedback">El tipo de insumo es obligatorio</div>
+            }
+          </div>
+
+          <div class="mb-3">
+            <label for="unitType" class="form-label">Unidad de Medida</label>
+            <select
+              class="form-select"
+              id="unitType"
+              formControlName="unitType"
+              [ngClass]="{'is-invalid': supplyForm.get('unitType')?.invalid && supplyForm.get('unitType')?.touched}"
             >
               <option value="">Seleccione una unidad</option>
               <option value="kg">Kilogramos</option>
@@ -73,25 +63,25 @@
               <option value="ml">Mililitros</option>
               <option value="unidad">Unidad</option>
             </select>
-            @if (supplyForm.controls['unit'].hasError('required') && supplyForm.controls['unit'].touched) {
+            @if (supplyForm.controls['unitType'].hasError('required') && supplyForm.controls['unitType'].touched) {
               <div class="invalid-feedback">La unidad de medida es obligatoria</div>
             }
           </div>
 
           <div class="mb-3">
-            <label for="stock" class="form-label">Cantidad en Stock</label>
+            <label for="minStock" class="form-label">Stock Mínimo</label>
             <input
               type="number"
               class="form-control"
-              id="stock"
-              formControlName="stock"
-              [ngClass]="{'is-invalid': supplyForm.get('stock')?.invalid && supplyForm.get('stock')?.touched}"
+              id="minStock"
+              formControlName="minStock"
+              [ngClass]="{'is-invalid': supplyForm.get('minStock')?.invalid && supplyForm.get('minStock')?.touched}"
             >
-            @if (supplyForm.controls['stock'].hasError('required') && supplyForm.controls['stock'].touched) {
-              <div class="invalid-feedback">La cantidad es obligatoria</div>
+            @if (supplyForm.controls['minStock'].hasError('required') && supplyForm.controls['minStock'].touched) {
+              <div class="invalid-feedback">El stock mínimo es obligatorio</div>
             }
-            @if (supplyForm.controls['stock'].hasError('min')) {
-              <div class="invalid-feedback">La cantidad no puede ser negativa</div>
+            @if (supplyForm.controls['minStock'].hasError('min')) {
+              <div class="invalid-feedback">El stock mínimo no puede ser negativo</div>
             }
           </div>
 

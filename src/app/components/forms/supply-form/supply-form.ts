@@ -23,10 +23,9 @@ export class SupplyForm implements OnInit {
   constructor(private fb: FormBuilder) {
     this.supplyForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
-      description: ['', Validators.required],
-      unitCost: [0, [Validators.required, Validators.min(0.01)]],
-      unit: ['', Validators.required],
-      stock: [0, [Validators.required, Validators.min(0)]]
+      type: ['', Validators.required],
+      unitType: ['', Validators.required],
+      minStock: [0, [Validators.required, Validators.min(0)]]
     });
   }
 

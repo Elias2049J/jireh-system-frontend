@@ -21,7 +21,6 @@
               formControlName="totalPay"
               [ngClass]="{'is-invalid': saleForm.get('totalPay')?.invalid && saleForm.get('totalPay')?.touched}"
               autocomplete="off"
-              (keydown.enter)="$event.preventDefault(); emitData()"
             >
             @if (saleForm.controls['totalPay'].hasError('required') && saleForm.controls['totalPay'].touched) {
               <div class="invalid-feedback">El monto es obligatorio</div>

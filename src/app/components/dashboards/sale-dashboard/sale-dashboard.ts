@@ -110,13 +110,41 @@ export class SaleDashboard implements OnInit {
   }
 
   closeCash():void {
-    this.saleService.closeCash().subscribe({
-      next: (result) => {
-        console.info("Closing cash result", result);
-        if (result) this.reportService.downloadSalesReport("/ventas_hoy")
-      },
-      error: (err) => {
-        console.error(`Error closing cash: ${err}`);
+    Swal.fire({
+      title: '¿Cerrar caja?',
+      text: 'Esta acción generará un reporte de ventas del día y cerrará la caja. ¿Desea continuar?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Aceptar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#198754',
+      cancelButtonColor: '#dc3545'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.saleService.closeCash().subscribe({
+          next: (result) => {
+            console.info("Closing cash result", result);
+            if (result) {
+              this.reportService.downloadSalesReport("/ventas_hoy");
+              Swal.fire({
+                title: '¡Caja cerrada!',
+                text: 'La caja ha sido cerrada correctamente y se ha generado el reporte',
+                icon: 'success',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#198754'
+              });
+            }
+          },
+          error: (err) => {
+            console.error(`Error closing cash: ${err}`);
+            Swal.fire({
+              title: 'Error',
+              text: 'No se pudo cerrar la caja. Por favor, intente de nuevo.',
+              icon: 'error',
+              confirmButtonText: 'Aceptar'
+            });
+          }
+        });
       }
     });
   }

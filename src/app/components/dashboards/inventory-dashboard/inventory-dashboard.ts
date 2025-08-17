@@ -4,7 +4,6 @@ import {SupplyModel} from '../../../models/supply.model';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {LotModel} from '../../../models/lot.model';
 import {AsyncPipe} from '@angular/common';
-import {Search} from '../../search/search';
 import {SupplyForm} from '../../forms/supply-form/supply-form';
 
 @Component({
@@ -24,29 +23,36 @@ export class InventoryDashboard {
   lots$: Observable<LotModel[]> = this._lots.asObservable();
   actionType: 'add' | 'edit' | 'delete' | null = null;
   showForm: boolean = false;
+  selectedSupply: SupplyModel | null = null;
 
   constructor(
     private inventoryService: InventoryService) {
   }
 
-  handleAction(type: 'add' | 'edit' | 'delete') {
+  handleAction(type: 'add' | 'edit' | 'delete', supply?: SupplyModel) {
     this.actionType = type;
     this.showForm = true;
+
+    if (type === 'edit' || type === 'delete') {
+      if (supply) {
+        this.selectedSupply = supply;
+      }
+    }
   }
 
   // Método para cancelar y cerrar el formulario
   cancelAction(): void {
     this.actionType = null;
     this.showForm = false;
+    this.selectedSupply = null;
   }
 
   columns = [
-    { field: 'id', header: 'Codigo' },
+    { field: 'idSupply', header: 'Código' },
     { field: 'name', header: 'Nombre' },
-    { field: 'description', header: 'Decripcion' },
-    { field: 'unitCost', header: 'Precio Unitario' },
-    { field: 'unit', header: 'Medida' },
-    { field: 'stock', header: 'Cantidad' }
+    { field: 'type', header: 'Tipo' },
+    { field: 'unitType', header: 'Unidad' },
+    { field: 'minStock', header: 'Stock Mínimo' }
   ];
 
   ngOnInit(): void {
@@ -58,17 +64,17 @@ export class InventoryDashboard {
     this.showForm = false;
     this.actionType = null;
     console.log(supplyData);
-    const newSupply = {
-      id: null,
+    const newSupply: SupplyModel = {
+      idSupply: null,
       name: supplyData['name'],
-      description: supplyData['description'],
-      unitCost: parseInt(supplyData['unitCost']),
-      unit: supplyData['unit'],
-      stock: parseInt(supplyData['stock'])};
+      type: supplyData['type'],
+      unitType: supplyData['unitType'],
+      minStock: parseInt(supplyData['minStock'])
+    };
     console.log(newSupply);
     this.inventoryService.createSupply(newSupply).subscribe({
       next: (createdSupply) => {
-        console.info('New product created successfully ', createdSupply);
+        console.info('New supply created successfully ', createdSupply);
         this.loadSupplies();
       },
       error: (err) => {
@@ -77,31 +83,39 @@ export class InventoryDashboard {
     });
   }
 
-  //creates a supply using the invetoryService method
+  //updates a supply using the inventoryService method
   updateSupply(supplyData: { [key: string]: string; }) {
     this.showForm = false;
     this.actionType = null;
     console.log(supplyData);
-    const newSupply = {
-      id: null,
+
+    if (!this.selectedSupply) {
+      console.error('No supply selected for update');
+      return;
+    }
+
+    const updatedSupply: SupplyModel = {
+      idSupply: this.selectedSupply.idSupply,
       name: supplyData['name'],
-      description: supplyData['description'],
-      unitCost: parseInt(supplyData['unitCost']),
-      unit: supplyData['unit'],
-      stock: parseInt(supplyData['stock'])};
-    console.log(newSupply);
-    this.inventoryService.createSupply(newSupply).subscribe({
-      next: (createdSupply) => {
-        console.info('Supply updated successfully ', createdSupply);
+      type: supplyData['type'],
+      unitType: supplyData['unitType'],
+      minStock: parseInt(supplyData['minStock'])
+    };
+
+    console.log(updatedSupply);
+    this.inventoryService.updateSupply(updatedSupply).subscribe({
+      next: (result) => {
+        console.info('Supply updated successfully ', result);
         this.loadSupplies();
+        this.selectedSupply = null;
       },
       error: (err) => {
-        console.error(`Error updating supply: ${newSupply.name} in InventoryDashboard`, err);
+        console.error(`Error updating supply: ${updatedSupply.name} in InventoryDashboard`, err);
       }
     });
   }
 
-  //Loads the menus from the api using getAllByMenyId method from service
+  //Loads inventory from the api
   loadInventory(): boolean {
     return this.loadSupplies() && this.loadLots();
   }

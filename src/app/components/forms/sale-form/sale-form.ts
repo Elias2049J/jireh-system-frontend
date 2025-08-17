@@ -29,7 +29,6 @@ export class SaleForm implements OnInit {
   }
 
   ngOnInit(): void {
-    // Inicialización adicional si es necesaria
   }
 
   emitData(): void {

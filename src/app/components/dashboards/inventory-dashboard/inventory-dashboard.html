@@ -23,23 +23,22 @@
           <tbody>
             @for (item of (supplies$ | async); track $index) {
               <tr>
-                <td class="align-middle">{{item.id}}</td>
+                <td class="align-middle">{{item.idSupply}}</td>
                 <td class="align-middle">{{item.name}}</td>
-                <td class="align-middle">{{item.description}}</td>
-                <td class="align-middle">{{item.unitCost}}</td>
-                <td class="align-middle">{{item.unit}}</td>
-                <td class="align-middle">{{item.stock}}</td>
+                <td class="align-middle">{{item.type}}</td>
+                <td class="align-middle">{{item.unitType}}</td>
+                <td class="align-middle">{{item.minStock}}</td>
                 <td class="align-middle">
-                  <i class="bi bi-pencil-square cursor-pointer" (click)="handleAction('edit')"></i>
+                  <i class="bi bi-pencil-square cursor-pointer" (click)="handleAction('edit', item)"></i>
                 </td>
                 <td class="align-middle">
-                  <i class="bi bi-trash3 text-danger cursor-pointer" (click)="handleAction('delete')"></i>
+                  <i class="bi bi-trash3 text-danger cursor-pointer" (click)="handleAction('delete', item)"></i>
                 </td>
               </tr>
             }
             @empty {
               <tr>
-                <td colspan="8" class="text-center py-3">No hay insumos disponibles</td>
+                <td colspan="7" class="text-center py-3">No hay insumos disponibles</td>
               </tr>
             }
           </tbody>
@@ -83,7 +82,8 @@
     <app-supply-form
       (dataEntered)="updateSupply($event)"
       (cancelled)="cancelAction()"
-      actionType="edit">
+      actionType="edit"
+      [supplyData]="selectedSupply">
     </app-supply-form>
   }
 </div>
