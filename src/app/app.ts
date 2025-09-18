@@ -1,16 +1,34 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { Sidebar } from './components/sidebar/sidebar';
-import { ProductsDashboard } from "./components/dashboards/products-dashboard/products-dashboard";
 import { Header } from './components/header/header';
-import {MenusDashboard} from './components/dashboards/menus-dashboard/menus-dashboard';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Sidebar, Header],
-  templateUrl: './app.html',
-  styleUrl: './app.scss'
+  standalone: true,
+  imports: [
+    RouterOutlet,
+    Sidebar,
+    Header,
+    CommonModule
+  ],
+  templateUrl: './app.html'
 })
-export class App {
-  protected title = 'pos';
+export class App implements OnInit {
+  title = 'Sistema Jireh';
+  isLoginPage = false;
+
+  constructor(private router: Router) {}
+
+  ngOnInit() {
+    this.isLoginPage = this.router.url === '/login' || this.router.url === '/';
+
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: any) => {
+      this.isLoginPage = event.url === '/login' || event.url === '/';
+    });
+  }
 }

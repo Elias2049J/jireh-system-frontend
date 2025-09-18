@@ -1,9 +1,13 @@
-import {Product} from './product.model';
+export enum PrintArea {
+  COCINA = 'COCINA',
+  MESERO = 'MESERO',
+  CAJA = 'CAJA'
+}
 
 export class Menu {
   constructor(
-    public idMenu: number,
+    public idMenu: number | null,
     public name: string,
-    public products: Product[]
+    public printArea: PrintArea | null
   ) {}
 }

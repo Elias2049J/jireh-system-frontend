@@ -31,8 +31,8 @@ export class ProductService {
     if (id === null) {
       throw new Error("No se puede eliminar un producto con ID nulo");
     }
-    const url = this.apiUrl + "/delete/" + id;
-    return this.http.delete<boolean>(url);
+    const url = this.apiUrl + `/${id}`+"/delete";
+    return this.http.get<boolean>(url);
   }
 
   update(product: Product): Observable<boolean> {

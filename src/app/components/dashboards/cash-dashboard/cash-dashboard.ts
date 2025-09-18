@@ -1,28 +1,28 @@
 import {Component, OnInit} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {SaleModel} from '../../../models/sale.model';
-import {SaleService} from '../../../services/sale-service';
+import {CashService} from '../../../services/cash-service';
 import {AsyncPipe} from '@angular/common';
 import {SaleForm} from '../../forms/sale-form/sale-form';
 import {ReportService} from '../../../services/report-service';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-sale-dashboard',
+  selector: 'app-cash-dashboard',
+  standalone: true,
   imports: [
     AsyncPipe,
     SaleForm
   ],
-  templateUrl: './sale-dashboard.html',
-  styleUrl: './sale-dashboard.scss'
+  templateUrl: './cash-dashboard.html'
 })
-export class SaleDashboard implements OnInit {
+export class CashDashboard implements OnInit {
   ngOnInit(): void {
     this.loadSales();
     this.getTotalAmountToday();
   }
 
-  constructor(private saleService: SaleService,
+  constructor(private cashService: CashService,
               private reportService: ReportService) {
   }
 
@@ -38,7 +38,7 @@ export class SaleDashboard implements OnInit {
 
 
   loadSales(): void {
-    this.saleService.getTodaySales().subscribe({
+    this.cashService.getTodaySales().subscribe({
       next: (data) => {
         this._todaySales.next(data);
         console.info("Received today sales:", data);
@@ -60,7 +60,7 @@ export class SaleDashboard implements OnInit {
     console.log(saleData);
     const newSale: SaleModel = {id: null as any, totalPay:saleData['totalPay'], dateTime:null as any};
     console.log(newSale);
-    this.saleService.registerSale(newSale).subscribe({
+    this.cashService.registerSale(newSale).subscribe({
       next: (created) => {
         console.info('New sale registered successfully ', created);
         this.loadSales();
@@ -74,7 +74,7 @@ export class SaleDashboard implements OnInit {
 
   openCash(): void {
     console.info("Opening cash");
-    this.saleService.openCash().subscribe({
+    this.cashService.openCash().subscribe({
       next: (result) => {
         console.info("Cash Open:", result);
         Swal.fire({
@@ -98,7 +98,7 @@ export class SaleDashboard implements OnInit {
   }
 
   getTotalAmountToday(): void {
-    this.saleService.getTodaySalesData().subscribe({
+    this.cashService.getTodaySales().subscribe({
       next: (data: Record<string, any>) => {
         this._totalAmountToday.next(data['totalAmount']);
         console.log(`Total amount assigned successfully: ${data['totalAmount']}`);
@@ -121,7 +121,7 @@ export class SaleDashboard implements OnInit {
       cancelButtonColor: '#dc3545'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.saleService.closeCash().subscribe({
+        this.cashService.closeCash().subscribe({
           next: (result) => {
             console.info("Closing cash result", result);
             if (result) {

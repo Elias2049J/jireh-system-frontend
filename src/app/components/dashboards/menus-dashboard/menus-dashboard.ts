@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {MenuService} from '../../../services/menu-service';
 import {MenuForm} from '../../forms/menu-form/menu-form';
 import {CommonModule} from '@angular/common';
-import {Menu} from '../../../models/menu.model';
+import {Menu, PrintArea} from '../../../models/menu.model';
 import {RouterLink} from '@angular/router';
 import {BehaviorSubject} from 'rxjs';
 
@@ -16,6 +16,7 @@ export class MenusDashboard implements OnInit {
   private _menus = new BehaviorSubject<Menu[]>([]);
   menus$ = this._menus.asObservable();
   showForm: boolean = false;
+  showTableView: boolean = false;
 
   constructor(
     private menuService: MenuService,
@@ -39,9 +40,14 @@ export class MenusDashboard implements OnInit {
   }
 
   // code that executes at the moment you push the button "accept"
-  onNameEntered(name: string) {
+  onDataEntered(menuData: {[key: string]: any}): void {
     this.showForm = false;
-    const newMenu = {idMenu: null as any, name: name.toLowerCase(), products: [] };
+    const newMenu: Menu = {
+      idMenu: null,
+      name: menuData['name'],
+      printArea: PrintArea[menuData['preparationArea'] as keyof typeof PrintArea]
+    };
+    console.log(newMenu);
     this.menuService.create(newMenu).subscribe({
       next: (createdMenu) => {
         console.info('New menu created successfully:', createdMenu);
@@ -51,5 +57,9 @@ export class MenusDashboard implements OnInit {
         console.error(`Error creating menu: ${newMenu.name} in menusDashboard`, err);
       }
     });
+  }
+
+  toggleView(): void {
+    this.showTableView = !this.showTableView;
   }
 }

@@ -8,12 +8,11 @@ import {CommonModule} from "@angular/common";
     ReactiveFormsModule,
     CommonModule
   ],
-  templateUrl: './menu-form.html',
-  styleUrl: './menu-form.scss'
+  templateUrl: './menu-form.html'
 })
 export class MenuForm implements OnInit {
   @Output() exitEvent = new EventEmitter<void>();
-  @Output() nameEntered = new EventEmitter<string>();
+  @Output() menuData = new EventEmitter<{[key: string]: any}>();
 
   menuForm: FormGroup;
 
@@ -24,17 +23,17 @@ export class MenuForm implements OnInit {
         Validators.minLength(3),
         Validators.maxLength(20),
         Validators.pattern(/^[a-zA-Z\s]+$/)
-      ]]
+      ]],
+      preparationArea: ['COCINA', Validators.required]
     });
   }
 
   ngOnInit() {
-    // Inicialización adicional si es necesaria
   }
 
-  emitName(): void {
+  emitData(): void {
     if (this.menuForm.valid) {
-      this.nameEntered.emit(this.menuForm.get('name')?.value);
+      this.menuData.emit(this.menuForm.value);
     }
   }
 

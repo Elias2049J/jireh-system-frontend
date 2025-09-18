@@ -8,8 +8,7 @@ import {CommonModule} from '@angular/common';
     ReactiveFormsModule,
     CommonModule
   ],
-  templateUrl: './sale-form.html',
-  styleUrl: './sale-form.scss'
+  templateUrl: './sale-form.html'
 })
 export class SaleForm implements OnInit {
   @Input() actionType: 'add' | 'edit' | null = null;

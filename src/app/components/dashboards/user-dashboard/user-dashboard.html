@@ -2,14 +2,14 @@
   <div class="row mb-4">
     <div class="col-12">
       <div class="d-flex align-items-center mb-3">
-        <input type="text" class="form-control me-2" placeholder="Buscar ...">
+        <input type="text" class="form-control me-2" placeholder="Buscar usuario..." [(ngModel)]="searchTerm" (keyup)="filterUsers()">
         <button class="btn btn-primary">Buscar</button>
       </div>
     </div>
   </div>
   <div class="row mb-5">
     <div class="col-12">
-      <div class="table-responsive" style="height: 400px; overflow-y: auto;">
+      <div class="table-responsive" style="height: 50vh; overflow-y: auto;">
         <table class="table table-striped table-hover">
           <thead class="table-dark sticky-top">
           <tr>
@@ -21,14 +21,12 @@
           </tr>
           </thead>
           <tbody>
-            @for (item of (supplies$ | async); track $index) {
+            @for (item of (filteredUsers$ | async); track $index) {
               <tr>
-                <td class="align-middle">{{item.idSupply}}</td>
+                <td class="align-middle">{{item.idUser}}</td>
                 <td class="align-middle">{{item.name}}</td>
-                <td class="align-middle">{{item.type}}</td>
-                <td class="align-middle">{{item.unitType}}</td>
-                <td class="align-middle">{{item.minStock}}</td>
-                <td class="align-middle">{{item.stock}}</td>
+                <td class="align-middle">{{item.role}}</td>
+                <td class="align-middle">{{item.active ? 'Activo' : 'Inactivo'}}</td>
                 <td class="align-middle">
                   <i class="bi bi-pencil-square cursor-pointer" (click)="handleAction('edit', item)"></i>
                 </td>
@@ -39,7 +37,7 @@
             }
             @empty {
               <tr>
-                <td colspan="8" class="text-center py-3">No hay insumos disponibles</td>
+                <td colspan="6" class="text-center py-3">No hay usuarios disponibles</td>
               </tr>
             }
           </tbody>
@@ -47,27 +45,24 @@
       </div>
     </div>
   </div>
-
   <div class="row pb-4 bg-light border-top pt-3">
-    <div class="col-12 d-flex justify-content-center">
-      <button (click)="handleAction('add')" class="btn btn-success">Nuevo Insumo</button>
+    <div class="col-12 d-flex justify-content-center gap-3">
+      <button (click)="handleAction('add')" class="btn btn-success">Registrar Usuario</button>
     </div>
   </div>
-
-  @if (showForm && actionType === 'add') {
-    <app-supply-form
-      actionType="add"
-      (dataEntered)="regSupply($event)"
-      (cancelled)="cancelAction()">
-    </app-supply-form>
+  @if (actionType === 'add') {
+    <app-user-form
+      (dataEntered)="createUser($event)"
+      (cancelled)="cancelAction()"
+      actionType="add">
+    </app-user-form>
   }
-
-  @if (showForm && actionType === 'edit') {
-    <app-supply-form
+  @if (actionType === 'edit') {
+    <app-user-form
+      (dataEntered)="updateUser($event)"
+      (cancelled)="cancelAction()"
       actionType="edit"
-      [supplyData]="selectedSupply"
-      (dataEntered)="updateSupply($event)"
-      (cancelled)="cancelAction()">
-    </app-supply-form>
+      [userData]="selectedUser">
+    </app-user-form>
   }
 </div>

@@ -1,3 +1,4 @@
+<script src="product-form.ts"></script>
 <div class="modal-backdrop fade show"></div>
 
 <div class="modal d-block">
@@ -11,26 +12,85 @@
       </div>
       <div class="modal-body">
         <form [formGroup]="productForm">
+
           <div class="mb-3">
-            <label for="desc" class="form-label">Nombre del producto</label>
+            <label for="type" class="form-label">Tipo de producto</label>
+            <select name="type" id="type" class="form-select" formControlName="type">
+              <option value="simple">Simple</option>
+              <option value="composed">Compuesto</option>
+            </select>
+          </div>
+
+          @if (productForm.get('type')?.value === 'simple') {
+            <div class="mb-3">
+              <label for="name" class="form-label">Nombre del producto</label>
+              <input
+                type="text"
+                class="form-control"
+                id="name"
+                formControlName="name"
+                [ngClass]="{'is-invalid': productForm.get('name')?.invalid && productForm.get('name')?.touched}"
+              >
+              @if (productForm.controls['name'].hasError('required') && productForm.controls['name'].touched) {
+                <div class="invalid-feedback">El nombre es obligatorio</div>
+              }
+              @if (productForm.controls['name'].hasError('minlength')) {
+                <div class="invalid-feedback">El nombre debe tener al menos 6 caracteres</div>
+              }
+              @if (productForm.controls['name'].hasError('maxlength')) {
+                <div class="invalid-feedback">El nombre debe tener menos de 50 caracteres</div>
+              }
+              @if (productForm.controls['name'].hasError('pattern')) {
+                <div class="invalid-feedback">El nombre solo puede contener letras y espacios</div>
+              }
+            </div>
+          } @else {
+            <div class="mb-3">
+              <label class="form-label">Producto simple 1</label>
+              <select class="form-select" formControlName="prod1">
+                <option [ngValue]="null">Seleccione producto</option>
+                @for (prod of productsSimple; track prod.idProduct) {
+                  <option [ngValue]="prod.idProduct">{{prod.name}}</option>
+                }
+              </select>
+              @if (productForm.controls['prod1'].hasError('required') && productForm.controls['prod1'].touched) {
+                <div class="invalid-feedback d-block">Seleccione el primer producto simple</div>
+              }
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Producto simple 2</label>
+              <select class="form-select" formControlName="prod2">
+                <option [ngValue]="null">Seleccione producto</option>
+                @for (prod of productsSimple; track prod.idProduct) {
+                  <option [ngValue]="prod.idProduct">{{prod.name}}</option>
+                }
+              </select>
+              @if (productForm.controls['prod2'].hasError('required') && productForm.controls['prod2'].touched) {
+                <div class="invalid-feedback d-block">Seleccione el segundo producto simple</div>
+              }
+            </div>
+          }
+
+          <div class="mb-3">
+            <label for="alias" class="form-label">Alias</label>
             <input
               type="text"
               class="form-control"
-              id="desc"
-              formControlName="desc"
-              [ngClass]="{'is-invalid': productForm.get('desc')?.invalid && productForm.get('desc')?.touched}"
+              id="alias"
+              formControlName="alias"
+              [ngClass]="{'is-invalid': productForm.get('alias')?.invalid && productForm.get('alias')?.touched}"
             >
-            @if (productForm.controls['desc'].hasError('required') && productForm.controls['desc'].touched) {
-              <div class="invalid-feedback">La descripción es obligatoria</div>
+            @if (productForm.controls['alias'].hasError('required') && productForm.controls['alias'].touched) {
+              <div class="invalid-feedback">El alias es obligatorio</div>
             }
-            @if (productForm.controls['desc'].hasError('minlength')) {
-              <div class="invalid-feedback">La descripción debe tener al menos 6 caracteres</div>
+            @if (productForm.controls['alias'].hasError('minlength')) {
+              <div class="invalid-feedback">El alias debe tener al menos 6 caracteres</div>
             }
-            @if (productForm.controls['desc'].hasError('maxlength')) {
-              <div class="invalid-feedback">La descripción debe tener menos de 50 caracteres</div>
+            @if (productForm.controls['alias'].hasError('maxlength')) {
+              <div class="invalid-feedback">El alias debe tener menos de 30 caracteres</div>
             }
-            @if (productForm.controls['desc'].hasError('pattern')) {
-              <div class="invalid-feedback">La descripción solo puede contener letras y espacios</div>
+            @if (productForm.controls['alias'].hasError('pattern')) {
+              <div class="invalid-feedback">El alias solo puede contener letras y espacios</div>
             }
           </div>
 
@@ -42,6 +102,7 @@
               class="form-control"
               id="price"
               formControlName="price"
+              [readonly]="productForm.get('type')?.value === 'composed'"
               [ngClass]="{'is-invalid': productForm.get('price')?.invalid && productForm.get('price')?.touched}"
             >
             @if (productForm.controls['price'].hasError('required') && productForm.controls['price'].touched) {

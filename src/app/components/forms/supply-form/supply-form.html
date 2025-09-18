@@ -50,21 +50,40 @@
 
           <div class="mb-3">
             <label for="unitType" class="form-label">Unidad de Medida</label>
-            <select
-              class="form-select"
-              id="unitType"
-              formControlName="unitType"
-              [ngClass]="{'is-invalid': supplyForm.get('unitType')?.invalid && supplyForm.get('unitType')?.touched}"
-            >
-              <option value="">Seleccione una unidad</option>
-              <option value="kg">Kilogramos</option>
-              <option value="g">Gramos</option>
-              <option value="l">Litros</option>
-              <option value="ml">Mililitros</option>
-              <option value="unidad">Unidad</option>
-            </select>
+
+            @if (!showCustomUnitType) {
+              <div class="d-flex gap-2">
+                <select
+                  class="form-select"
+                  id="unitType"
+                  formControlName="unitType"
+                  [ngClass]="{'is-invalid': supplyForm.get('unitType')?.invalid && supplyForm.get('unitType')?.touched}"
+                >
+                  <option value="">Seleccione una unidad</option>
+                  <option value="kg">Kilogramos</option>
+                  <option value="g">Gramos</option>
+                  <option value="l">Litros</option>
+                  <option value="ml">Mililitros</option>
+                  <option value="unidad">Unidad</option>
+                </select>
+                <button type="button" class="btn btn-outline-secondary" (click)="toggleCustomUnitType()">Otro</button>
+              </div>
+            } @else {
+              <div class="input-group">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="customUnitType"
+                  formControlName="unitType"
+                  placeholder="Especifique la unidad"
+                  [ngClass]="{'is-invalid': supplyForm.get('unitType')?.invalid && supplyForm.get('unitType')?.touched}"
+                >
+                <button class="btn btn-outline-secondary" type="button" (click)="returnToUnitTypeSelect()">Volver</button>
+              </div>
+            }
+
             @if (supplyForm.controls['unitType'].hasError('required') && supplyForm.controls['unitType'].touched) {
-              <div class="invalid-feedback">La unidad de medida es obligatoria</div>
+              <div class="invalid-feedback d-block">La unidad de medida es obligatoria</div>
             }
           </div>
 
@@ -82,6 +101,23 @@
             }
             @if (supplyForm.controls['minStock'].hasError('min')) {
               <div class="invalid-feedback">El stock mínimo no puede ser negativo</div>
+            }
+          </div>
+
+          <div class="mb-3">
+            <label for="stock" class="form-label">Stock Actual</label>
+            <input
+              type="number"
+              class="form-control"
+              id="stock"
+              formControlName="stock"
+              [ngClass]="{'is-invalid': supplyForm.get('stock')?.invalid && supplyForm.get('stock')?.touched}"
+            >
+            @if (supplyForm.controls['stock'].hasError('required') && supplyForm.controls['stock'].touched) {
+              <div class="invalid-feedback">El stock actual es obligatorio</div>
+            }
+            @if (supplyForm.controls['stock'].hasError('min')) {
+              <div class="invalid-feedback">El stock actual no puede ser negativo</div>
             }
           </div>
 

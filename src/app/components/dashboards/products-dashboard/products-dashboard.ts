@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Search } from '../../search/search';
-import {Product} from '../../../models/product.model';
+import {Product, ProductSubType, ProductType} from '../../../models/product.model';
 import {ProductService} from '../../../services/product-service';
 import {ProductForm} from '../../forms/product-form/product-form';
 import {ActivatedRoute, RouterLink, RouterLinkActive} from '@angular/router';
@@ -35,10 +35,13 @@ export class ProductsDashboard implements OnInit{
   }
 
   columns = [
-    { field: 'id', header: 'Codigo' },
-    { field: 'desc', header: 'Descripcion' },
+    { field: 'id', header: 'Id' },
+    { field: 'code', header: 'Codigo' },
+    { field: 'name', header: 'Nombre' },
+    { field: 'alias', header: 'Alias' },
     { field: 'price', header: 'Precio' },
-    { field: 'available', header: 'Disponible' }
+    { field: 'available', header: 'Disponible' },
+    { field: 'productType', header: 'Tipo' }
   ];
 
   //sets an actionType to an action
@@ -47,7 +50,7 @@ export class ProductsDashboard implements OnInit{
     this.showForm = true;
   }
 
-  // Método para cancelar y cerrar el formulario
+  // Cancel and close the form
   cancelAction(): void {
     this.actionType = null;
     this.showForm = false;
@@ -55,11 +58,39 @@ export class ProductsDashboard implements OnInit{
   }
 
   //creates a product using the productService method
-  createProduct(productData: { [key: string]: string; }) {
+  createProduct(productData: { [key: string]: any; }) {
     this.showForm = false;
     this.actionType = null;
     console.log(productData);
-    const newProd = {id: null as any, desc: productData['desc'], price: parseFloat(productData['price']), available: true, idMenu: parseInt(this.idMenu as any)};
+    const prodType = productData['type'] === ProductSubType.simple ? ProductType.SIMPLE : ProductType.COMPUESTO;
+    let newProd: Product;
+    if (prodType === ProductType.SIMPLE) {
+      newProd = {
+        type: ProductSubType.simple,
+        productType: ProductType.SIMPLE,
+        idProduct: null,
+        code: null,
+        name: productData['name'],
+        alias: productData['alias'],
+        price: parseFloat(productData['price']),
+        available: true,
+        idMenu: parseInt(this.idMenu as any),
+        idsSimpleProducts: null
+      };
+    } else {
+      newProd = {
+        type: ProductSubType.composed,
+        productType: ProductType.COMPUESTO,
+        idProduct: null,
+        code: null,
+        name: null,
+        alias: productData['alias'],
+        price: null,
+        available: true,
+        idMenu: parseInt(this.idMenu as any),
+        idsSimpleProducts: [productData['prod1'], productData['prod2']]
+      };
+    }
     console.log(newProd);
     this.productService.create(newProd).subscribe({
       next: (createdProd) => {
@@ -67,7 +98,7 @@ export class ProductsDashboard implements OnInit{
         this.loadProducts();
       },
       error: (err) => {
-        console.error(`Error creating product: ${newProd.desc} in productsDashboard`, err);
+        console.error(`Error creating product: ${newProd.name} in productsDashboard`, err);
       }
     });
   }
@@ -90,8 +121,8 @@ export class ProductsDashboard implements OnInit{
   }
 
   deleteProduct(item: Product) {
-    if (confirm(`¿Está seguro de eliminar el producto: ${item.desc}?`)) {
-      this.productService.delete(item.id).subscribe({
+    if (confirm(`¿Está seguro de eliminar el producto: ${item.name}?`)) {
+      this.productService.delete(item.idProduct).subscribe({
         next: () => {
           console.info('Producto eliminado con éxito');
           this.loadProducts();
@@ -105,10 +136,9 @@ export class ProductsDashboard implements OnInit{
 
   updateProduct(productData?: any) {
     if (productData) {
-      // Si recibimos datos del formulario, actualizamos el producto
       const updatedProduct = {
         ...productData,
-        id: this.selectedProduct?.id,
+        id: this.selectedProduct?.idProduct,
         idMenu: parseInt(this.idMenu as any)
       };
 
@@ -122,10 +152,6 @@ export class ProductsDashboard implements OnInit{
           console.error('Error al actualizar producto', err);
         }
       });
-    } else {
-      // Si no recibimos datos, simplemente preparamos para la edición
-      // En una implementación real, aquí se cargaría el producto seleccionado
-      // this.selectedProduct = productToEdit;
     }
   }
 }

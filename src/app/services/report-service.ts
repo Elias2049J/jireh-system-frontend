@@ -15,13 +15,9 @@ export class ReportService {
   constructor(private http: HttpClient) { }
 
   getTodaySalesReport(): Observable<Blob> {
-    return this.http.get(`${this._apiUrl}/venta_diaria`, {
+    return this.http.get(`${this._apiUrl}/ventas_hoy`, {
       responseType: 'blob'
     });
-  }
-
-  getSalesReportFilename(): Observable<string> {
-    return this.http.get<string>(`${this._apiUrl}/nombre_archivo`);
   }
 
   createTodaySalesReport(): Observable<boolean> {
@@ -79,7 +75,7 @@ export class ReportService {
 
   downloadSalesReport(reportRoute: string): void {
     const url = this.apiUrl + this.routes[0] + reportRoute;
-    this.downloadFromUrl(url, "Reporte de ventas.pdf")
+    this.downloadFromUrl(url, "Reporte_de_ventas"+Date.now()+".pdf");
   }
 
   get apiUrl(): string {

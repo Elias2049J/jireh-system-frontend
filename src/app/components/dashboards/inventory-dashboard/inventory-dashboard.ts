@@ -40,7 +40,6 @@ export class InventoryDashboard {
     }
   }
 
-  // Método para cancelar y cerrar el formulario
   cancelAction(): void {
     this.actionType = null;
     this.showForm = false;
@@ -52,7 +51,8 @@ export class InventoryDashboard {
     { field: 'name', header: 'Nombre' },
     { field: 'type', header: 'Tipo' },
     { field: 'unitType', header: 'Unidad' },
-    { field: 'minStock', header: 'Stock Mínimo' }
+    { field: 'minStock', header: 'Stock Mínimo' },
+    { field: 'stock', header: 'Stock Actual' },
   ];
 
   ngOnInit(): void {
@@ -69,7 +69,8 @@ export class InventoryDashboard {
       name: supplyData['name'],
       type: supplyData['type'],
       unitType: supplyData['unitType'],
-      minStock: parseInt(supplyData['minStock'])
+      minStock: parseInt(supplyData['minStock']),
+      stock: parseInt(supplyData['stock'])
     };
     console.log(newSupply);
     this.inventoryService.createSupply(newSupply).subscribe({
@@ -99,7 +100,8 @@ export class InventoryDashboard {
       name: supplyData['name'],
       type: supplyData['type'],
       unitType: supplyData['unitType'],
-      minStock: parseInt(supplyData['minStock'])
+      minStock: parseInt(supplyData['minStock']),
+      stock: parseInt(supplyData['stock']),
     };
 
     console.log(updatedSupply);

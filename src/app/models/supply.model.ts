@@ -4,6 +4,7 @@ export class SupplyModel {
     public name: string,
     public type: string,
     public unitType: string,
-    public minStock: number
+    public minStock: number,
+    public stock?: number
   ) {}
 }

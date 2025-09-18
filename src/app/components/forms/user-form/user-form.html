@@ -1,0 +1,149 @@
+<div [ngClass]="{'modal-backdrop fade show': actionType !== 'login'}"></div>
+
+<div [ngClass]="{'modal d-block': actionType !== 'login'}">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content shadow">
+      @if (actionType !== 'login') {
+        <div class="modal-header bg-light">
+          <h5 class="modal-title fw-bold">
+            {{ actionType === 'add' ? 'Nuevo Usuario' : 'Editar Usuario' }}
+          </h5>
+          <button type="button" class="btn-close" (click)="cancel()"></button>
+        </div>
+      }
+      <div class="modal-body p-4">
+        <form [formGroup]="userForm" (keydown.enter)="$event.preventDefault(); submit()">
+          <div class="mb-3">
+            <label for="name" class="form-label">Nombre de Usuario</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light">
+                <i class="bi bi-person"></i>
+              </span>
+              <input
+                type="text"
+                class="form-control"
+                id="name"
+                placeholder="Ingrese su nombre de usuario"
+                formControlName="name"
+                [ngClass]="{'is-invalid': userForm.get('name')?.invalid && userForm.get('name')?.touched}"
+                autocomplete="username"
+              >
+              <div class="invalid-feedback">
+                @if (userForm.controls['name'].hasError('required')) {
+                  El nombre de usuario es obligatorio
+                } @else if (userForm.controls['name'].hasError('minlength')) {
+                  El nombre debe tener al menos 3 caracteres
+                }
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="pass" class="form-label">Contraseña</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light">
+                <i class="bi bi-key"></i>
+              </span>
+              <input
+                type="password"
+                class="form-control"
+                id="pass"
+                placeholder="Ingrese su contraseña"
+                formControlName="pass"
+                [ngClass]="{'is-invalid': userForm.get('pass')?.invalid && userForm.get('pass')?.touched}"
+                autocomplete="current-password"
+              >
+              <div class="invalid-feedback">
+                @if (userForm.controls['pass'].hasError('required')) {
+                  La contraseña es obligatoria
+                } @else if (userForm.controls['pass'].hasError('minlength')) {
+                  La contraseña debe tener al menos 6 caracteres
+                }
+              </div>
+            </div>
+          </div>
+
+          @if (actionType !== 'login') {
+            <div class="mb-3">
+              <label for="confirmPass" class="form-label">Confirmar Contraseña</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light">
+                  <i class="bi bi-key-fill"></i>
+                </span>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="confirmPass"
+                  placeholder="Confirme su contraseña"
+                  formControlName="confirmPass"
+                  [ngClass]="{'is-invalid': (userForm.get('confirmPass')?.invalid && userForm.get('confirmPass')?.touched) || userForm.hasError('passwordMismatch')}"
+                  autocomplete="new-password"
+                >
+                <div class="invalid-feedback">
+                  @if (userForm.controls['confirmPass'].hasError('required')) {
+                    La confirmación de contraseña es obligatoria
+                  } @else if (userForm.hasError('passwordMismatch')) {
+                    Las contraseñas no coinciden
+                  }
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="role" class="form-label">Rol</label>
+              <select
+                class="form-select"
+                id="role"
+                formControlName="role"
+                [ngClass]="{'is-invalid': userForm.get('role')?.invalid && userForm.get('role')?.touched}"
+              >
+                <option value="" disabled selected>Seleccione un rol</option>
+                <option value="ADMIN">Administrador</option>
+                <option value="CASHIER">Cajero</option>
+                <option value="WAITER">Mesero</option>
+              </select>
+              @if (userForm.controls['role'].hasError('required') && userForm.controls['role'].touched) {
+                <div class="invalid-feedback">El rol es obligatorio</div>
+              }
+            </div>
+
+            @if (actionType === 'edit') {
+              <div class="mb-3">
+                <label for="active" class="form-label">Estado</label>
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="active"
+                    formControlName="active"
+                    [checked]="userForm.get('active')?.value">
+                  <label class="form-check-label" for="active">
+                    {{ userForm.get('active')?.value ? 'Usuario Activo' : 'Usuario Inactivo' }}
+                  </label>
+                </div>
+              </div>
+            }
+          }
+
+          <div class="d-grid gap-2 mt-4">
+            @if (actionType !== 'login') {
+              <div class="d-flex justify-content-between">
+                <button type="button" class="btn btn-outline-secondary" (click)="cancel()">
+                  <i class="bi bi-x-circle me-1"></i> Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" (click)="submit()" [disabled]="userForm.invalid">
+                  <i class="bi bi-check-circle me-1"></i>
+                  {{ actionType === 'add' ? 'Registrar' : 'Actualizar' }}
+                </button>
+              </div>
+            } @else {
+              <button type="button" class="btn btn-primary btn-lg" (click)="submit()" [disabled]="userForm.invalid">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
+              </button>
+            }
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
