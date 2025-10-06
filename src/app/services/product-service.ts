@@ -21,29 +21,26 @@ export class ProductService {
   }
 
   getAll(): Observable<Product[]> {
-    return this.http.get<Product[]>(this.apiUrl);
+    return this.http.get<Product[]>(`${this.apiUrl}`);
   }
 
   create(product: Product): Observable<boolean> {
-    const url = this.apiUrl + "/create";
-    return this.http.post<boolean>(url, product);
+    return this.http.post<boolean>(`${this.apiUrl}/create`, product);
   }
 
   delete(id: number | null): Observable<boolean> {
     if (id === null) {
       throw new Error("No se puede eliminar un producto con ID nulo");
     }
-    const url = this.apiUrl + `/${id}`+"/delete";
-    return this.http.get<boolean>(url);
+    return this.http.delete<boolean>(`${this.apiUrl}/${id}/delete`);
   }
 
   update(product: Product): Observable<boolean> {
-    const url = this.apiUrl + "/update";
-    return this.http.put<boolean>(url, product);
+    return this.http.put<boolean>(`${this.apiUrl}/update`, product);
   }
 
   getAllOptionLists(): Observable<OptionListDTO[]> {
-    return this.http.get<OptionListDTO[]>(this.apiUrl + '/option-lists');
+    return this.http.get<OptionListDTO[]>(`${this.apiUrl}/option-lists`);
   }
 
   getOptionListById(id: number): Observable<OptionListDTO> {

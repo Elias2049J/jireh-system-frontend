@@ -9,7 +9,7 @@ import {ApiUrl} from '../models/ApiUrl';
   providedIn: 'root'
 })
 export class CashService {
-  private _apiUrl: string = ApiUrl.URL+"/ventas";
+  private apiUrl: string = ApiUrl.URL+"/ventas";
 
   constructor(
     private http: HttpClient,
@@ -17,26 +17,26 @@ export class CashService {
   ) {}
 
   getAllSales(): Observable<SaleModel[]> {
-    return this.http.get<SaleModel[]>(`${this._apiUrl}`);
+    return this.http.get<SaleModel[]>(`${this.apiUrl}`);
   }
 
   getTodaySales(): Observable<SaleModel[]> {
-    return this.http.get<SaleModel[]>(`${this._apiUrl}/ventas_hoy`);
+    return this.http.get<SaleModel[]>(`${this.apiUrl}/ventas_hoy`);
   }
 
   registerSale(sale: SaleModel): Observable<boolean> {
-    return this.http.post<boolean>(`${this._apiUrl}/registrar_venta`, sale);
+    return this.http.post<boolean>(`${this.apiUrl}/registrar_venta`, sale);
   }
 
   openCash(): Observable<boolean> {
-    return this.http.get<boolean>(`${this._apiUrl}/abrir_caja`);
+    return this.http.get<boolean>(`${this.apiUrl}/abrir_caja`);
   }
 
   closeCash(): Observable<boolean> {
-    return this.http.get<boolean>(`${this._apiUrl}/cerrar_caja`);
+    return this.http.get<boolean>(`${this.apiUrl}/cerrar_caja`);
   }
 
   getTotalSales(): Observable<number> {
-    return this.http.get<number>(`${this._apiUrl}/total_ventas`);
+    return this.http.get<number>(`${this.apiUrl}/total_ventas`);
   }
 }

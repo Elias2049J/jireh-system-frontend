@@ -5,12 +5,13 @@ import { UserModel } from '../models/user.model';
 import { Router } from '@angular/router';
 import { JwtResponseDTO } from '../models/jwt-response.model';
 import { jwtDecode } from 'jwt-decode';
+import {ApiUrl} from '../models/ApiUrl';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl: string = "http://localhost:8080/auth";
+  private apiUrl: string = ApiUrl.URL+"/auth";
   private tokenKey: string = 'jireh_auth_token';
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(this.hasToken());
   private currentUserSubject = new BehaviorSubject<UserModel | null>(null);

@@ -13,26 +13,22 @@ export class MenuService {
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<Menu[]> {
-    return this.http.get<Menu[]>(this.apiUrl);
+    return this.http.get<Menu[]>(`${this.apiUrl}`);
   }
 
   getById(id: number): Observable<Menu> {
-    const url = `${this.apiUrl}/${id}`;
-    return this.http.get<Menu>(url);
+    return this.http.get<Menu>(`${this.apiUrl}/${id}`);
   }
 
   create(menu: Menu): Observable<boolean> {
-    const url = this.apiUrl + "/create";
-    return this.http.post<boolean>(url, menu);
+    return this.http.post<boolean>(`${this.apiUrl}/create`, menu);
   }
 
   update(menu: Menu): Observable<boolean> {
-    const url = this.apiUrl + "/update";
-    return this.http.put<boolean>(url, menu);
+    return this.http.put<boolean>(`${this.apiUrl}/update`, menu);
   }
 
   delete(idMenu: number): Observable<boolean> {
-    const url = this.apiUrl + "/delete";
-    return this.http.delete<boolean>(url);
+    return this.http.delete<boolean>(`${this.apiUrl}/${idMenu}/delete`);
   }
 }
