@@ -12,7 +12,6 @@ import { AsyncPipe } from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import Swal from 'sweetalert2';
 import {OptionsDashboard} from '../options-dashboard/options-dashboard';
-import {OptionListDTO} from '../../../models/option-list.dto';
 
 @Component({
   selector: 'app-menus-dashboard',
@@ -99,6 +98,9 @@ export class MenusDashboard implements OnInit {
       },
       error: (err) => {
         console.error(`Error actualizando menu: ${err}`);
+        this.notificationService.error('Error actualizando el menú');
+        this.showEditForm = false;
+        this.editMenu = null;
       }
     });
   }
@@ -284,7 +286,7 @@ export class MenusDashboard implements OnInit {
         const lower = q.toLowerCase();
         const filtered = (products || []).filter(p =>
           (p.name?.toLowerCase().includes(lower) ||
-           (p.code && p.code.toLowerCase().includes(lower)))
+            (p.code && p.code.toLowerCase().includes(lower)))
         );
         this.allProducts.set(products);
         this.filteredProducts.set(filtered);

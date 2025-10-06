@@ -6,6 +6,7 @@ import { CommonModule, AsyncPipe } from '@angular/common';
 import {RouterLink, RouterLinkActive} from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NotificationService } from '../../../services/notification.service';
+import { signal } from '@angular/core';
 
 @Component({
   selector: 'app-mesas-dashboard',
@@ -15,20 +16,11 @@ import { NotificationService } from '../../../services/notification.service';
   styleUrl: './mesas-dashboard.scss'
 })
 export class MesasDashboard implements OnInit {
-  private _mesas = new BehaviorSubject<MesaDTO[]>([]);
-  mesas$: Observable<MesaDTO[]> = this._mesas.asObservable();
+  mesas = signal<MesaDTO[]>([]);
   showForm: boolean = false;
   actionType: 'add' | 'edit' | 'delete' | null = null;
   selectedMesa: MesaDTO | null = null;
   mesaForm: FormGroup;
-
-  columns = [
-    { field: 'id', header: 'ID' },
-    { field: 'number', header: 'Número' },
-    { field: 'free', header: 'Libre' },
-    { field: 'paid', header: 'Pagada' },
-    { field: 'activatedAt', header: 'Activada' }
-  ];
 
   constructor(private mesaService: MesaService, private fb: FormBuilder, private notificationService: NotificationService) {
     this.mesaForm = this.fb.group({
@@ -45,11 +37,12 @@ export class MesasDashboard implements OnInit {
   loadMesas(): void {
     this.mesaService.getAll().subscribe({
       next: (data) => {
-        this._mesas.next(data);
+        this.mesas.set(data);
+        this.notificationService.info('Mesas cargadas correctamente');
       },
       error: (err) => {
-        console.error('Error cargando mesas:', err);
         this.notificationService.error('No se pudieron cargar las mesas');
+        console.error('Error cargando mesas:', err);
       }
     });
   }
@@ -68,6 +61,7 @@ export class MesasDashboard implements OnInit {
         },
         error: (err) => {
           this.notificationService.error('No se pudo eliminar la mesa');
+          console.error('Error al eliminar mesa:', err);
         }
       });
     }
@@ -112,6 +106,7 @@ export class MesasDashboard implements OnInit {
         },
         error: (err) => {
           this.notificationService.error('No se pudo registrar la mesa');
+          console.error('Error al registrar mesa:', err);
         }
       });
     } else if (this.actionType === 'edit' && this.selectedMesa) {
@@ -124,6 +119,7 @@ export class MesasDashboard implements OnInit {
         },
         error: (err) => {
           this.notificationService.error('No se pudo actualizar la mesa');
+          console.error('Error al actualizar mesa:', err);
         }
       });
     }

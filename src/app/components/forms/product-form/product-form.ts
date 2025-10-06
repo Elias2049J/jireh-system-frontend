@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output, signal} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Product, ProductSubType, ProductType} from '../../../models/product.model';
 import {ProductService} from '../../../services/product-service';
 import {CommonModule} from "@angular/common";
@@ -15,8 +15,8 @@ import {OptionListDTO} from "../../../models/option-list.dto";
   templateUrl: './product-form.html'
 })
 export class ProductForm implements OnInit {
-  actionType = signal<'add' | 'edit' | null>(null);
-  productData = signal<Product | null>(null);
+  @Input() actionType: 'add' | 'edit' | null = null;
+  @Input() productData: Product | null = null;
   @Output() dataEntered = new EventEmitter<any>();
   @Output() cancelled = new EventEmitter<void>();
 
@@ -54,17 +54,17 @@ export class ProductForm implements OnInit {
       }
     });
 
-    if (this.actionType() === 'edit' && this.productData()) {
+    if (this.actionType === 'edit' && this.productData) {
       this.productForm.patchValue({
-        name: this.productData().name,
-        prefix: this.productData().prefix,
-        price: this.productData().price,
-        available: this.productData().available
+        name: this.productData.name,
+        prefix: this.productData.prefix,
+        price: this.productData.price,
+        available: this.productData.available
       });
 
       // Cargar listas de opciones previamente seleccionadas
-      if (this.productData().optionLists && this.productData().optionLists.length > 0) {
-        this.productData().optionLists.forEach(optionList => {
+      if (this.productData.optionLists && this.productData.optionLists.length > 0) {
+        this.productData.optionLists.forEach(optionList => {
           const control = new FormControl(optionList.idOptionList);
           this.optionListControls.push(control);
         });

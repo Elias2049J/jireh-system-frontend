@@ -13,15 +13,16 @@
         <table class="table table-striped table-hover">
           <thead class="table-dark sticky-top">
           <tr>
-            @for (col of columns; track col.field) {
-              <th class="fw-bold">{{col.header}}</th>
-            }
+            <th class="fw-bold">ID</th>
+            <th class="fw-bold">Usuario</th>
+            <th class="fw-bold">Rol</th>
+            <th class="fw-bold">Estado</th>
             <th class="fw-bold">Editar</th>
             <th class="fw-bold">Eliminar</th>
           </tr>
           </thead>
           <tbody>
-            @for (item of (filteredUsers$ | async); track $index) {
+            @for (item of filteredUsers(); track $index) {
               <tr>
                 <td class="align-middle">{{item.idUser}}</td>
                 <td class="align-middle">{{item.name}}</td>

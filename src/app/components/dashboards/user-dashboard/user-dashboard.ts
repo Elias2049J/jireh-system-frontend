@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserForm } from '../../forms/user-form/user-form';
 import { UserService } from '../../../services/user-service';
 import { UserModel } from '../../../models/user.model';
+import { signal } from '@angular/core';
+import { NotificationService } from '../../../services/notification.service';
 
 @Component({
   selector: 'app-user-dashboard',
   imports: [
-    AsyncPipe,
     CommonModule,
     FormsModule,
     UserForm
@@ -18,11 +18,8 @@ import { UserModel } from '../../../models/user.model';
   styleUrl: './user-dashboard.scss'
 })
 export class UserDashboard implements OnInit {
-  private _users = new BehaviorSubject<UserModel[]>([]);
-  private _filteredUsers = new BehaviorSubject<UserModel[]>([]);
-
-  users$: Observable<UserModel[]> = this._users.asObservable();
-  filteredUsers$: Observable<UserModel[]> = this._filteredUsers.asObservable();
+  users = signal<UserModel[]>([]);
+  filteredUsers = signal<UserModel[]>([]);
 
   actionType: 'add' | 'edit' | 'delete' | null = null;
   showForm: boolean = false;
@@ -30,7 +27,8 @@ export class UserDashboard implements OnInit {
   searchTerm: string = '';
 
   constructor(
-    private userService: UserService
+    private userService: UserService,
+    private notificationService: NotificationService
   ) {}
 
   handleAction(type: 'add' | 'edit' | 'delete', user?: UserModel) {
@@ -54,13 +52,6 @@ export class UserDashboard implements OnInit {
     this.selectedUser = null;
   }
 
-  columns = [
-    { field: 'idUser', header: 'ID' },
-    { field: 'name', header: 'Usuario' },
-    { field: 'role', header: 'Rol' },
-    { field: 'active', header: 'Estado' }
-  ];
-
   ngOnInit(): void {
     this.loadUsers();
   }
@@ -81,10 +72,11 @@ export class UserDashboard implements OnInit {
     console.log(newUser);
     this.userService.createUser(newUser).subscribe({
       next: (created) => {
-        console.info('Nuevo usuario creado exitosamente');
+        this.notificationService.success('Usuario creado exitosamente');
         this.loadUsers();
       },
       error: (err) => {
+        this.notificationService.error('Error al crear usuario');
         console.error(`Error al crear usuario: ${newUser.name}`, err);
       }
     });
@@ -96,6 +88,7 @@ export class UserDashboard implements OnInit {
     console.log(userData);
 
     if (!this.selectedUser) {
+      this.notificationService.warning('No hay usuario seleccionado para actualizar');
       console.error('No hay usuario seleccionado para actualizar');
       return;
     }
@@ -111,11 +104,12 @@ export class UserDashboard implements OnInit {
     console.log(updatedUser);
     this.userService.updateUser(updatedUser).subscribe({
       next: (response) => {
-        console.info(`Usuario actualizado exitosamente: ${response}`);
+        this.notificationService.success('Usuario actualizado exitosamente');
         this.loadUsers();
         this.selectedUser = null;
       },
       error: (err) => {
+        this.notificationService.error('Error al actualizar usuario');
         console.error(`Error al actualizar usuario: ${updatedUser.name}`, err);
       }
     });
@@ -125,11 +119,12 @@ export class UserDashboard implements OnInit {
     if (confirm(`¿Está seguro de eliminar el usuario ${user.name}?`)) {
       this.userService.deleteUser(user.idUser!).subscribe({
         next: () => {
-          console.info('Usuario eliminado con éxito');
+          this.notificationService.success('Usuario eliminado con éxito');
           this.loadUsers();
           this.cancelAction();
         },
         error: (err) => {
+          this.notificationService.error('Error al eliminar usuario');
           console.error('Error al eliminar usuario', err);
         }
       });
@@ -140,26 +135,26 @@ export class UserDashboard implements OnInit {
 
   filterUsers(): void {
     if (!this.searchTerm.trim()) {
-      this._filteredUsers.next(this._users.getValue());
+      this.filteredUsers.set(this.users());
       return;
     }
-
-    const filtered = this._users.getValue().filter(user =>
+    const filtered = this.users().filter(user =>
       user.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       user.role.toLowerCase().includes(this.searchTerm.toLowerCase())
     );
-
-    this._filteredUsers.next(filtered);
+    this.filteredUsers.set(filtered);
   }
 
   loadUsers(): void {
     this.userService.getAllUsers().subscribe({
       next: (data) => {
-        this._users.next(data);
-        this._filteredUsers.next(data);
+        this.users.set(data);
+        this.filteredUsers.set(data);
+        this.notificationService.info('Usuarios cargados correctamente');
         console.info("Usuarios cargados:", data);
       },
       error: (err) => {
+        this.notificationService.error('Error al cargar usuarios');
         console.error(`Error al cargar usuarios: ${err}`);
       }
     });

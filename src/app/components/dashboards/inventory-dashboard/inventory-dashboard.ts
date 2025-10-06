@@ -1,67 +1,47 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {InventoryService} from '../../../services/inventory-service';
 import {SupplyModel} from '../../../models/supply.model';
-import {BehaviorSubject, Observable} from 'rxjs';
 import {LotModel} from '../../../models/lot.model';
-import {AsyncPipe} from '@angular/common';
 import {SupplyForm} from '../../forms/supply-form/supply-form';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { signal } from '@angular/core';
+import { NotificationService } from '../../../services/notification.service';
 
 @Component({
   selector: 'app-inventory-dashboard',
   imports: [
-    AsyncPipe,
     SupplyForm
   ],
   templateUrl: './inventory-dashboard.html',
   styleUrl: './inventory-dashboard.scss'
 })
-export class InventoryDashboard {
-  private _supplies = new BehaviorSubject<SupplyModel[]>([]);
-  private _lots = new BehaviorSubject<LotModel[]>([]);
-  supplies$: Observable<SupplyModel[]> = this._supplies.asObservable();
-  lots$: Observable<LotModel[]> = this._lots.asObservable();
-
-  private _showForm = new BehaviorSubject<boolean>(false);
-  showForm$ = this._showForm.asObservable();
-  showForm = toSignal(this.showForm$);
-
-  private _formAction = new BehaviorSubject<'add' | 'edit'>('add');
-  formAction$ = this._formAction.asObservable();
-  formAction = toSignal(this.formAction$);
-
-  private _selectedSupply = new BehaviorSubject<SupplyModel | null>(null);
-  selectedSupply$ = this._selectedSupply.asObservable();
-  selectedSupply = toSignal(this.selectedSupply$);
+export class InventoryDashboard implements OnInit {
+  supplies = signal<SupplyModel[]>([]);
+  lots = signal<LotModel[]>([]);
+  showForm = signal(false);
+  formAction = signal<'add' | 'edit'>('add');
+  selectedSupply = signal<SupplyModel | null>(null);
 
   constructor(
-    private inventoryService: InventoryService) {
+    private inventoryService: InventoryService,
+    private notificationService: NotificationService
+  ) {
   }
 
   handleAction(type: 'add' | 'edit' | 'delete', supply?: SupplyModel) {
-    this._formAction.next(type === 'delete' ? 'edit' : type); // 'delete' no tiene formulario, pero para compatibilidad
-    this._showForm.next(true);
+    this.formAction.set(type === 'delete' ? 'edit' : type);
+    this.showForm.set(true);
     if (type === 'edit' || type === 'delete') {
       if (supply) {
-        this._selectedSupply.next(supply);
+        this.selectedSupply.set(supply);
       }
     }
   }
 
   cancelAction(): void {
-    this._formAction.next('add');
-    this._showForm.next(false);
-    this._selectedSupply.next(null);
+    this.formAction.set('add');
+    this.showForm.set(false);
+    this.selectedSupply.set(null);
   }
-
-  columns = [
-    { field: 'idSupply', header: 'Código' },
-    { field: 'name', header: 'Nombre' },
-    { field: 'type', header: 'Tipo' },
-    { field: 'unitType', header: 'Unidad' },
-    { field: 'minStock', header: 'Stock Mínimo' },
-    { field: 'stock', header: 'Stock Actual' },
-  ];
 
   ngOnInit(): void {
     this.loadInventory();
@@ -69,8 +49,8 @@ export class InventoryDashboard {
 
   //creates a supply using the invetoryService method
   regSupply(supplyData: { [key: string]: string; }) {
-    this._showForm.next(false);
-    this._formAction.next('add');
+    this.showForm.set(false);
+    this.formAction.set('add');
     console.log(supplyData);
     const newSupply: SupplyModel = {
       idSupply: null,
@@ -83,10 +63,11 @@ export class InventoryDashboard {
     console.log(newSupply);
     this.inventoryService.createSupply(newSupply).subscribe({
       next: (createdSupply) => {
-        console.info('New supply created successfully ', createdSupply);
+        this.notificationService.success('Insumo creado correctamente');
         this.loadSupplies();
       },
       error: (err) => {
+        this.notificationService.error('Error al crear el insumo');
         console.error(`Error creating supply: ${newSupply.name} in InventoryDashboard`, err);
       }
     });
@@ -94,15 +75,15 @@ export class InventoryDashboard {
 
   //updates a supply using the inventoryService method
   updateSupply(supplyData: { [key: string]: string; }) {
-    this._showForm.next(false);
-    this._formAction.next('add');
+    this.showForm.set(false);
+    this.formAction.set('add');
     console.log(supplyData);
 
-    if (!this.selectedSupply) {
+    if (!this.selectedSupply()) {
+      this.notificationService.warning('No hay insumo seleccionado para actualizar');
       console.error('No supply selected for update');
       return;
     }
-
     const updatedSupply: SupplyModel = {
       idSupply: this.selectedSupply()!.idSupply,
       name: supplyData['name'],
@@ -115,11 +96,12 @@ export class InventoryDashboard {
     console.log(updatedSupply);
     this.inventoryService.updateSupply(updatedSupply).subscribe({
       next: (response) => {
-        console.info('Supply updated successfully ', response);
+        this.notificationService.success('Insumo actualizado correctamente');
         this.loadSupplies();
-        this._selectedSupply.next(null);
+        this.selectedSupply.set(null);
       },
       error: (err) => {
+        this.notificationService.error('Error al actualizar el insumo');
         console.error(`Error updating supply: ${updatedSupply.name} in InventoryDashboard`, err);
       }
     });
@@ -131,19 +113,19 @@ export class InventoryDashboard {
   }
 
   loadSupplies(): boolean {
-    if (this !== null) {
-      this.inventoryService.getAllSupplies().subscribe({
-        next: (data) => {
-          this._supplies.next(data);
-          console.info("Received supplies: ", data);
-          return true;
-        },
-        error: (err) => {
-          console.error(`Error loading supplies: ${err}`);
-          return false;
-        }
-      });
-    }
+    this.inventoryService.getAllSupplies().subscribe({
+      next: (data) => {
+        this.supplies.set(data);
+        this.notificationService.info('Lista de insumos actualizada');
+        console.info("Received supplies: ", data);
+        return true;
+      },
+      error: (err) => {
+        this.notificationService.error('Error al cargar los insumos');
+        console.error(`Error loading supplies: ${err}`);
+        return false;
+      }
+    });
     return false;
   }
 
@@ -151,20 +133,20 @@ export class InventoryDashboard {
     const today = new Date();
     const twoMonthsBefore = new Date(today);
     twoMonthsBefore.setMonth(today.getMonth() - 2);
-    if (this !== null) {
-      this.inventoryService.getLotsBetweenDates(today.toLocaleDateString('es-PE'), twoMonthsBefore.toLocaleDateString('es-PE')
+    this.inventoryService.getLotsBetweenDates(today.toLocaleDateString('es-PE'), twoMonthsBefore.toLocaleDateString('es-PE')
     ).subscribe({
-        next: (data) => {
-          this._lots.next(data);
-          console.info("Received lots: ", data);
-          return true;
-        },
-        error: (err) => {
-          console.error(`Error loading lots: ${err}`);
-          return false;
-        }
-      });
-    }
+      next: (data) => {
+        this.lots.set(data);
+        this.notificationService.info('Lista de lotes actualizada');
+        console.info("Received lots: ", data);
+        return true;
+      },
+      error: (err) => {
+        this.notificationService.error('Error al cargar los lotes');
+        console.error(`Error loading lots: ${err}`);
+        return false;
+      }
+    });
     return false;
   }
 }

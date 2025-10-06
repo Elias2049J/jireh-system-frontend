@@ -14,12 +14,12 @@
       <div class="table-responsive" style="max-height: 50vh; overflow-y: auto;">
         <table class="table table-hover align-middle mb-0">
           <thead class="table-light">
-            <tr>
-              <th>ID</th>
-              <th>Nombre</th>
-              <th>Área</th>
-              <th></th>
-            </tr>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Área</th>
+            <th></th>
+          </tr>
           </thead>
           <tbody>
             @if (menus$ | async; as menus) {
@@ -77,16 +77,16 @@
             <div class="table-responsive" style="max-height: 50vh; overflow-y: auto;">
               <table class="table table-striped table-hover align-middle">
                 <thead class="table-dark sticky-top">
-                  <tr>
-                    <th>ID</th>
-                    <th>Código</th>
-                    <th>Nombre</th>
-                    <th>Prefijo</th>
-                    <th>Precio</th>
-                    <th>Disponible</th>
-                    <th>Tipo</th>
-                    <th>Acciones</th>
-                  </tr>
+                <tr>
+                  <th>ID</th>
+                  <th>Código</th>
+                  <th>Nombre</th>
+                  <th>Prefijo</th>
+                  <th>Precio</th>
+                  <th>Disponible</th>
+                  <th>Tipo</th>
+                  <th>Acciones</th>
+                </tr>
                 </thead>
                 <tbody>
                   @if (filteredProducts().length > 0) {
@@ -111,15 +111,37 @@
                     }
                   } @else {
                     <tr>
-                      <td colspan="8" class="text-center text-muted py-3">No hay productos para mostrar</td>
+                      <td colspan="8" class="text-center py-4 text-muted">No hay productos disponibles</td>
                     </tr>
                   }
                 </tbody>
               </table>
             </div>
           }
+          <div class="d-flex justify-content-end mt-3">
+            @if (!showAllProducts) {
+              <button class="btn btn-success" (click)="handleProductAction('add')">Agregar</button>
+            }
+          </div>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Forms modales -->
+  @if (showForm) {
+    <app-menu-form (menuData)="onDataEntered($event)" (exitEvent)="showForm=false"></app-menu-form>
+  }
+  @if (showEditForm && editMenu) {
+    <app-menu-form [menu]="editMenu" (menuData)="onEditDataEntered($event)" (exitEvent)="showEditForm=false; editMenu=null"></app-menu-form>
+  }
+  @if (showProductForm) {
+    <app-product-form
+      [actionType]="productActionType"
+      [productData]="selectedProduct"
+      (dataEntered)="onProductFormSubmit($event)"
+      (cancelled)="showProductForm=false">
+    </app-product-form>
+  }
+  <app-options-dashboard></app-options-dashboard>
 </div>

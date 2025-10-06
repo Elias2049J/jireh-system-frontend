@@ -14,15 +14,17 @@
         <table class="table table-striped table-hover">
           <thead class="table-dark sticky-top">
           <tr>
-            @for (col of columns; track col.field) {
-              <th class="fw-bold">{{col.header}}</th>
-            }
+            <th class="fw-bold">ID</th>
+            <th class="fw-bold">Número</th>
+            <th class="fw-bold">Libre</th>
+            <th class="fw-bold">Pagada</th>
+            <th class="fw-bold">Último uso</th>
             <th class="fw-bold">Editar</th>
             <th class="fw-bold">Eliminar</th>
           </tr>
           </thead>
           <tbody>
-            @for (item of (mesas$ | async); track $index) {
+            @for (item of mesas(); track $index) {
               <tr>
                 <td class="align-middle">{{item.id}}</td>
                 <td class="align-middle">{{item.number}}</td>
