@@ -75,8 +75,8 @@ export class CashDashboard implements OnInit {
   openCash(): void {
     console.info("Opening cash");
     this.cashService.openCash().subscribe({
-      next: (result) => {
-        console.info("Cash Open:", result);
+      next: (response) => {
+        console.info("Cash Open:", response);
         Swal.fire({
           title: '¡Caja Abierta!',
           text: 'La caja ha sido abierta correctamente',

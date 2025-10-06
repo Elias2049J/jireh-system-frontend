@@ -106,8 +106,8 @@ export class InventoryDashboard {
 
     console.log(updatedSupply);
     this.inventoryService.updateSupply(updatedSupply).subscribe({
-      next: (result) => {
-        console.info('Supply updated successfully ', result);
+      next: (response) => {
+        console.info('Supply updated successfully ', response);
         this.loadSupplies();
         this.selectedSupply = null;
       },

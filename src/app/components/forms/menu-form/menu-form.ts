@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CommonModule} from "@angular/common";
 
@@ -11,6 +11,7 @@ import {CommonModule} from "@angular/common";
   templateUrl: './menu-form.html'
 })
 export class MenuForm implements OnInit {
+  @Input() menu: any = null;
   @Output() exitEvent = new EventEmitter<void>();
   @Output() menuData = new EventEmitter<{[key: string]: any}>();
 
@@ -29,6 +30,12 @@ export class MenuForm implements OnInit {
   }
 
   ngOnInit() {
+    if (this.menu) {
+      this.menuForm.patchValue({
+        name: this.menu.name,
+        preparationArea: this.menu.printArea
+      });
+    }
   }
 
   emitData(): void {

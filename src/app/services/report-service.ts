@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpResponse} from '@angular/common/http';
 import {Observable, window} from 'rxjs';
+import {ApiUrl} from '../models/ApiUrl';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReportService {
-  private _apiUrl: string = "http://localhost:8080/reportes";
+  private _apiUrl: string = ApiUrl.URL+"/reportes";
   private _routes: string[] = [
     "/descarga",
     "/ventas_hoy"

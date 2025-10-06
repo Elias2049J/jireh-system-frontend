@@ -1,9 +1,13 @@
-<header class="bg-primary text-white py-3 shadow">
-  <div class="container-fluid">
+<header class="bg-primary text-white shadow">
+  <div class="container-fluid position-relative py-2">
     <div class="row">
-      <div class="col-12">
-        <h2 class="text-center mb-0"> {{title$ | async}} </h2>
+      <div class="col-12 text-center">
+        <h1 class="h5 fw-semibold mb-0">{{ mainTitle$ | async }}</h1>
+        <div class="small text-white-50">Sistema Jireh</div>
       </div>
+    </div>
+    <div class="position-absolute start-0 bottom-0 ps-3 pb-1">
+      <small class="text-white-75 bg-dark bg-opacity-10 px-2 py-1 rounded">{{ breadcrumb$ | async }}</small>
     </div>
   </div>
 </header>

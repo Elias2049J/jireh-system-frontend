@@ -45,9 +45,8 @@ export class LoginPage implements OnInit {
     console.log('Intentando iniciar sesión con:', loginData);
 
     this.authService.login(loginData).subscribe({
-      next: (result) => {
-        if (result) {
-          // Success
+      next: (response) => {
+        if (response) {
           Swal.fire({
             title: '¡Bienvenido!',
             text: 'Inicio de sesión exitoso',

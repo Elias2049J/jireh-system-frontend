@@ -3,12 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { SaleModel } from '../models/sale.model';
 import { ReportService } from './report-service';
+import {ApiUrl} from '../models/ApiUrl';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CashService {
-  private _apiUrl: string = "http://localhost:8080/ventas";
+  private _apiUrl: string = ApiUrl.URL+"/ventas";
 
   constructor(
     private http: HttpClient,
@@ -16,7 +17,7 @@ export class CashService {
   ) {}
 
   getAllSales(): Observable<SaleModel[]> {
-    return this.http.get<SaleModel[]>(`${this._apiUrl}/lista_ventas_completa`);
+    return this.http.get<SaleModel[]>(`${this._apiUrl}`);
   }
 
   getTodaySales(): Observable<SaleModel[]> {
@@ -37,9 +38,5 @@ export class CashService {
 
   getTotalSales(): Observable<number> {
     return this.http.get<number>(`${this._apiUrl}/total_ventas`);
-  }
-
-  get apiUrl(): string {
-    return this._apiUrl;
   }
 }

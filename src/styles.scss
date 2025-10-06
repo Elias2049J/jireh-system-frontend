@@ -1,18 +1,5 @@
 :root {
   --sidebar-width: 200pt;
-
-  --bg-color: #f8fafc;
-  --menubar-border-color: #cbd5e1;
-  --btn-bg-color: #007bff;
-  --btn-text-color: #fff;
-  --btn-hover-bg-color: #0056b3;
-  --btn-active-bg-color: #0f172a;
-  --btn-active-text-color: #fff;
-  --btn-border-radius: 4px;
-
-  --input-placeholder: #007bff;
-  --btn-txt-size: 1rem;
-  --h3-size: 1.25rem;
 }
 
 html, body {
@@ -21,4 +8,5 @@ html, body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+  overflow-y: auto;
 }

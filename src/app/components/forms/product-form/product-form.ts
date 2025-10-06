@@ -1,14 +1,16 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {Product, ProductType, ProductSubType} from '../../../models/product.model';
+import {Component, EventEmitter, Input, OnInit, Output, signal} from '@angular/core';
+import {FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {Product, ProductSubType, ProductType} from '../../../models/product.model';
 import {ProductService} from '../../../services/product-service';
 import {CommonModule} from "@angular/common";
+import {OptionListDTO} from "../../../models/option-list.dto";
 
 @Component({
   selector: 'app-product-form',
   imports: [
     ReactiveFormsModule,
-    CommonModule
+    CommonModule,
+    FormsModule
   ],
   templateUrl: './product-form.html'
 })
@@ -19,99 +21,92 @@ export class ProductForm implements OnInit {
   @Output() cancelled = new EventEmitter<void>();
 
   productForm: FormGroup;
-  productsSimple: Product[] = [];
-  selectedType: string = 'simple';
+  allOptionLists = signal<OptionListDTO[]>([]);
+  optionListControls: FormControl[] = [];
 
   constructor(private fb: FormBuilder, private productService: ProductService) {
     this.productForm = this.fb.group({
-      type: ['simple', Validators.required],
       name: ['', [
         Validators.required,
         Validators.maxLength(50),
-        Validators.minLength(6),
-        Validators.pattern(/^[a-zA-Z\-.ñÑ/ \s]+$/)
+        Validators.minLength(3),
+        Validators.pattern(/^[\w\-.ñÑ/\s0-9]+$/)
       ]],
-      alias: ['', [
-        Validators.required,
-        Validators.maxLength(30),
-        Validators.minLength(6),
-        Validators.pattern(/^[a-zA-Z\-.ñÑ/ \s]+$/)
+      prefix: ['', [
+        Validators.maxLength(30)
       ]],
       price: [0, [
         Validators.required,
         Validators.min(1),
         Validators.pattern(/^[0-9]+(\.[0-9]+)?$/)
       ]],
-      available: [true],
-      prod1: [null],
-      prod2: [null]
+      available: [true]
     });
   }
 
   ngOnInit() {
-    this.productService.getAll().subscribe({
-      next: (products) => {
-        this.productsSimple = products.filter(p => p.type === ProductSubType.simple);
+    this.productService.getAllOptionLists().subscribe({
+      next: (data) => {
+        this.allOptionLists.set(data);
       },
       error: (err) => {
-        console.error('Error cargando productos simples:', err);
-        this.productsSimple = [];
+        console.error('Error cargando option lists:', err);
       }
-    });
-
-    this.productForm.get('type')?.valueChanges.subscribe((type) => {
-      this.selectedType = type;
-      if (type === ProductSubType.composed) {
-        this.productForm.get('name')?.disable();
-        this.productForm.get('prod1')?.setValidators([Validators.required]);
-        this.productForm.get('prod2')?.setValidators([Validators.required]);
-        this.productForm.get('price')?.disable();
-      } else {
-        this.productForm.get('name')?.enable();
-        this.productForm.get('prod1')?.clearValidators();
-        this.productForm.get('prod2')?.clearValidators();
-        this.productForm.get('prod1')?.setValue(null);
-        this.productForm.get('prod2')?.setValue(null);
-        this.productForm.get('price')?.enable();
-      }
-      this.productForm.get('prod1')?.updateValueAndValidity();
-      this.productForm.get('prod2')?.updateValueAndValidity();
-    });
-
-    // Actualizar el precio automáticamente si es compuesto
-    this.productForm.get('prod1')?.valueChanges.subscribe(() => {
-      this.updateComposedPrice();
-    });
-    this.productForm.get('prod2')?.valueChanges.subscribe(() => {
-      this.updateComposedPrice();
     });
 
     if (this.actionType === 'edit' && this.productData) {
-      this.productForm.patchValue(this.productData);
-      this.selectedType = this.productData.type;
+      this.productForm.patchValue({
+        name: this.productData.name,
+        prefix: this.productData.prefix,
+        price: this.productData.price,
+        available: this.productData.available
+      });
+
+      // Cargar listas de opciones previamente seleccionadas
+      if (this.productData.optionLists && this.productData.optionLists.length > 0) {
+        this.productData.optionLists.forEach(optionList => {
+          const control = new FormControl(optionList.idOptionList);
+          this.optionListControls.push(control);
+        });
+      } else {
+        // Si no hay listas de opciones, agregar al menos una vacía
+        this.addOptionListSlot();
+      }
+    } else {
+      // Por defecto agregar un slot vacío
+      this.addOptionListSlot();
     }
   }
 
-  updateComposedPrice(): void {
-    if (this.productForm.get('type')?.value === ProductSubType.composed) {
-      const prod1Id = this.productForm.get('prod1')?.value;
-      const prod2Id = this.productForm.get('prod2')?.value;
-      let price = 0;
-      if (prod1Id) {
-        const prod1 = this.productsSimple.find(p => p.idProduct === prod1Id);
-        if (prod1 && prod1.price) price += prod1.price;
-      }
-      if (prod2Id) {
-        const prod2 = this.productsSimple.find(p => p.idProduct === prod2Id);
-        if (prod2 && prod2.price) price += prod2.price;
-      }
-      this.productForm.get('price')?.setValue(price);
-    }
+  addOptionListSlot(): void {
+    const control = new FormControl(null);
+    this.optionListControls.push(control);
+  }
+
+  removeOptionListSlot(index: number): void {
+    this.optionListControls.splice(index, 1);
+  }
+
+  getSelectedOptionLists(): OptionListDTO[] {
+    const selectedOptionListIds = this.optionListControls
+      .map(control => control.value)
+      .filter(id => id !== null);
+
+    return this.allOptionLists()
+      .filter(optionList => selectedOptionListIds.includes(optionList.idOptionList));
   }
 
   submit(): void {
     if (this.productForm.valid) {
-      this.dataEntered.emit(this.productForm.value);
+      const formValue = this.productForm.value;
+      const productData = {
+        ...formValue,
+        type: ProductSubType.simple,
+        productType: ProductType.SIMPLE,
+        optionLists: this.getSelectedOptionLists()
+      };
+
+      this.dataEntered.emit(productData);
     }
   }
 

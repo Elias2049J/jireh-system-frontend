@@ -9,8 +9,10 @@ import { AsyncPipe } from '@angular/common';
   styleUrl: './header.scss'
 })
 export class Header {
-  title$;
+  mainTitle$;
+  breadcrumb$;
   constructor(private titleService: TitleService) {
-    this.title$ = this.titleService.title$;
+    this.mainTitle$ = this.titleService.mainTitle$;
+    this.breadcrumb$ = this.titleService.breadcrumb$;
    }
 }

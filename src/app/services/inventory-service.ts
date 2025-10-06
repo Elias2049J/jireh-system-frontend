@@ -3,12 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { SupplyModel } from '../models/supply.model';
 import { LotModel } from '../models/lot.model';
+import {ApiUrl} from '../models/ApiUrl';
 
 @Injectable({
   providedIn: 'root'
 })
 export class InventoryService {
-  private apiUrl: string = "http://localhost:8080/inventario";
+  private apiUrl: string = ApiUrl.URL+"/inventario";
 
   constructor(private http: HttpClient) { }
 

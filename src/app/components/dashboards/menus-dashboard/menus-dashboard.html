@@ -1,73 +1,147 @@
 <div class="container-fluid mt-4">
-  <div class="row mb-4">
-    <div class="col-12 text-center">
-      <div class="btn-group">
-        <button class="btn btn-primary mx-2">Ver todos los platos</button>
-        <button (click)="showForm = true" class="btn btn-success mx-2">Añadir Menú</button>
-        <button class="btn btn-danger mx-2">Eliminar Menú</button>
-        <button class="btn btn-outline-secondary mx-2" (click)="toggleView()">
-          {{ showTableView ? 'Vista de tarjetas' : 'Vista de tabla' }}
-        </button>
+  <div class="row mb-5 vh-80">
+    <!-- Columna izquierda: Menús -->
+    <div class="col-12 col-md-4">
+      <h4 class="mb-3">Menús</h4>
+      <!-- Card para ver todos los platos -->
+      <div class="card mb-3" role="button" (click)="onShowAllProducts()" [class.border-primary]="showAllProducts" [class.bg-primary]="showAllProducts" [class.text-white]="showAllProducts">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div class="fw-semibold">Todos los platos</div>
+          <i class="bi bi-list-task" [class.text-muted]="!showAllProducts" [class.text-white]="showAllProducts"></i>
+        </div>
+      </div>
+
+      <div class="table-responsive" style="max-height: 50vh; overflow-y: auto;">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Área</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (menus$ | async; as menus) {
+              @for (menu of menus; track menu.idMenu) {
+                <tr [class.table-active]="selectedMenu?.idMenu === menu.idMenu" (click)="selectMenu(menu)" style="cursor:pointer;">
+                  <td>
+                    <span class="badge rounded-pill" [ngClass]="{ 'bg-primary': selectedMenu?.idMenu === menu.idMenu, 'text-dark': selectedMenu?.idMenu !== menu.idMenu }">{{ menu.idMenu }}</span>
+                  </td>
+                  <td class="fw-bold">{{ menu.name }}</td>
+                  <td><small class="text-muted">{{ menu.printArea }}</small></td>
+                  <td></td>
+                </tr>
+              }
+            } @else {
+              <tr>
+                <td colspan="4" class="text-center text-muted py-3">Aun no hay menus</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-3 d-flex gap-2">
+        <button class="btn btn-outline-success flex-fill" (click)="showForm = true">Nuevo</button>
+        <button class="btn btn-outline-primary flex-fill" (click)="loadMenus()">Actualizar</button>
+        <button class="btn btn-outline-danger flex-fill" (click)="deleteSelectedMenu()">Eliminar</button>
+      </div>
+    </div>
+
+    <!-- Columna derecha: Productos -->
+    <div class="col-12 col-md-8">
+      <h4 class="mb-3">Productos</h4>
+
+      <!-- Contenedor superior: búsqueda con botón limpiar -->
+      <div class="mb-3">
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="Buscar producto..." [(ngModel)]="searchTerm" (input)="onSearchTermChange(searchTerm)">
+          <button class="btn btn-outline-secondary" type="button" title="Limpiar búsqueda" (click)="clearSearch()">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Contenedor inferior: cuerpo de productos (spinner + tabla) -->
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{ showAllProducts ? 'Lista Completa' : (selectedMenu ? selectedMenu.name : 'Seleccione un menú') }}</h5>
+          <p class="card-text text-muted">{{ showAllProducts ? 'Mostrando lista completa de productos' : (selectedMenu ? ('Área: ' + selectedMenu.printArea) : 'Haga clic en un menú de la izquierda para ver sus productos') }}</p>
+
+          @if (isLoading()) {
+            <div class="d-flex justify-content-center align-items-center py-5">
+              <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div>
+            </div>
+          } @else {
+            <div class="table-responsive" style="max-height: 50vh; overflow-y: auto;">
+              <table class="table table-striped table-hover align-middle">
+                <thead class="table-dark sticky-top">
+                  <tr>
+                    <th>ID</th>
+                    <th>Código</th>
+                    <th>Nombre</th>
+                    <th>Prefijo</th>
+                    <th>Precio</th>
+                    <th>Disponible</th>
+                    <th>Tipo</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @if (filteredProducts().length > 0) {
+                    @for (prod of filteredProducts(); track prod.idProduct) {
+                      <tr>
+                        <td>{{ prod.idProduct }}</td>
+                        <td>{{ prod.code }}</td>
+                        <td>{{ prod.name }}</td>
+                        <td>{{ prod.prefix }}</td>
+                        <td>{{ prod.price | currency:'S/':'symbol':'1.2-2' }}</td>
+                        <td>{{ prod.available ? 'Sí' : 'No' }}</td>
+                        <td>{{ prod.type }}</td>
+                        <td>
+                          <button class="btn btn-sm btn-outline-secondary me-2" (click)="handleProductAction('edit', prod)">
+                            <i class="bi bi-pencil-square"></i>
+                          </button>
+                          <button class="btn btn-sm btn-outline-danger" (click)="deleteProduct(prod)">
+                            <i class="bi bi-trash3"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    }
+                  } @else {
+                    <tr>
+                      <td colspan="8" class="text-center py-4 text-muted">No hay productos disponibles</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+          <div class="d-flex justify-content-end mt-3">
+            @if (!showAllProducts) {
+              <button class="btn btn-success" (click)="handleProductAction('add')">Agregar</button>
+            }
+          </div>
+        </div>
       </div>
     </div>
   </div>
+
+  <!-- Forms modales -->
   @if (showForm) {
-    <app-menu-form
-      (menuData)="onDataEntered($event)"
-      (exitEvent)="showForm=false">
-    </app-menu-form>
+    <app-menu-form (menuData)="onDataEntered($event)" (exitEvent)="showForm=false"></app-menu-form>
   }
-  @if (!showTableView) {
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-      @if (menus$ | async; as menus) {
-        @for (menu of menus; track menu.idMenu) {
-          <div class="col">
-            <div class="card h-100">
-              <div class="card-body">
-                <h5 class="card-title">{{ menu.name.toLocaleUpperCase() }}</h5>
-                <a [routerLink]="['/menu', menu.idMenu, 'products']" class="stretched-link">
-                  <img src="" class="card-img-bottom" alt="{{menu.name}}">
-                </a>
-              </div>
-            </div>
-          </div>
-        }
-      } @else {
-        <div class="col-12 text-center">
-          <p class="text-muted">Aun no hay menus</p>
-        </div>
-      }
-    </div>
-  } @else {
-    <div class="table-responsive" style="max-height: 70vh; height: 70vh; overflow-y: auto">
-      <table class="table table-striped table-hover">
-        <thead class="table-dark sticky-top">
-          <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Área de preparación</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          @if (menus$ | async; as menus) {
-            @for (menu of menus; track menu.idMenu) {
-              <tr>
-                <td>{{ menu.idMenu }}</td>
-                <td>{{ menu.name }}</td>
-                <td>{{ menu.printArea }}</td>
-                <td>
-                  <a [routerLink]="['/menu', menu.idMenu, 'products']" class="btn btn-sm btn-outline-primary">Ver productos</a>
-                </td>
-              </tr>
-            }
-          } @else {
-            <tr>
-              <td colspan="4" class="text-center py-3">Aun no hay menus</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+  @if (showEditForm && editMenu) {
+    <app-menu-form [menu]="editMenu" (menuData)="onEditDataEntered($event)" (exitEvent)="showEditForm=false; editMenu=null"></app-menu-form>
   }
+  @if (showProductForm) {
+    <app-product-form
+      [actionType]="productActionType"
+      [productData]="selectedProduct"
+      (dataEntered)="onProductFormSubmit($event)"
+      (cancelled)="showProductForm=false">
+    </app-product-form>
+  }
+  <app-options-dashboard></app-options-dashboard>
 </div>

@@ -110,8 +110,8 @@ export class UserDashboard implements OnInit {
 
     console.log(updatedUser);
     this.userService.updateUser(updatedUser).subscribe({
-      next: (result) => {
-        console.info('Usuario actualizado exitosamente');
+      next: (response) => {
+        console.info(`Usuario actualizado exitosamente: ${response}`);
         this.loadUsers();
         this.selectedUser = null;
       },
