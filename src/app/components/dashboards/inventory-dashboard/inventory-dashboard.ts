@@ -5,6 +5,7 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {LotModel} from '../../../models/lot.model';
 import {AsyncPipe} from '@angular/common';
 import {SupplyForm} from '../../forms/supply-form/supply-form';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-inventory-dashboard',
@@ -18,32 +19,39 @@ import {SupplyForm} from '../../forms/supply-form/supply-form';
 export class InventoryDashboard {
   private _supplies = new BehaviorSubject<SupplyModel[]>([]);
   private _lots = new BehaviorSubject<LotModel[]>([]);
-  dataSource: any;
   supplies$: Observable<SupplyModel[]> = this._supplies.asObservable();
   lots$: Observable<LotModel[]> = this._lots.asObservable();
-  actionType: 'add' | 'edit' | 'delete' | null = null;
-  showForm: boolean = false;
-  selectedSupply: SupplyModel | null = null;
+
+  private _showForm = new BehaviorSubject<boolean>(false);
+  showForm$ = this._showForm.asObservable();
+  showForm = toSignal(this.showForm$);
+
+  private _formAction = new BehaviorSubject<'add' | 'edit'>('add');
+  formAction$ = this._formAction.asObservable();
+  formAction = toSignal(this.formAction$);
+
+  private _selectedSupply = new BehaviorSubject<SupplyModel | null>(null);
+  selectedSupply$ = this._selectedSupply.asObservable();
+  selectedSupply = toSignal(this.selectedSupply$);
 
   constructor(
     private inventoryService: InventoryService) {
   }
 
   handleAction(type: 'add' | 'edit' | 'delete', supply?: SupplyModel) {
-    this.actionType = type;
-    this.showForm = true;
-
+    this._formAction.next(type === 'delete' ? 'edit' : type); // 'delete' no tiene formulario, pero para compatibilidad
+    this._showForm.next(true);
     if (type === 'edit' || type === 'delete') {
       if (supply) {
-        this.selectedSupply = supply;
+        this._selectedSupply.next(supply);
       }
     }
   }
 
   cancelAction(): void {
-    this.actionType = null;
-    this.showForm = false;
-    this.selectedSupply = null;
+    this._formAction.next('add');
+    this._showForm.next(false);
+    this._selectedSupply.next(null);
   }
 
   columns = [
@@ -61,8 +69,8 @@ export class InventoryDashboard {
 
   //creates a supply using the invetoryService method
   regSupply(supplyData: { [key: string]: string; }) {
-    this.showForm = false;
-    this.actionType = null;
+    this._showForm.next(false);
+    this._formAction.next('add');
     console.log(supplyData);
     const newSupply: SupplyModel = {
       idSupply: null,
@@ -86,8 +94,8 @@ export class InventoryDashboard {
 
   //updates a supply using the inventoryService method
   updateSupply(supplyData: { [key: string]: string; }) {
-    this.showForm = false;
-    this.actionType = null;
+    this._showForm.next(false);
+    this._formAction.next('add');
     console.log(supplyData);
 
     if (!this.selectedSupply) {
@@ -96,7 +104,7 @@ export class InventoryDashboard {
     }
 
     const updatedSupply: SupplyModel = {
-      idSupply: this.selectedSupply.idSupply,
+      idSupply: this.selectedSupply()!.idSupply,
       name: supplyData['name'],
       type: supplyData['type'],
       unitType: supplyData['unitType'],
@@ -109,7 +117,7 @@ export class InventoryDashboard {
       next: (response) => {
         console.info('Supply updated successfully ', response);
         this.loadSupplies();
-        this.selectedSupply = null;
+        this._selectedSupply.next(null);
       },
       error: (err) => {
         console.error(`Error updating supply: ${updatedSupply.name} in InventoryDashboard`, err);

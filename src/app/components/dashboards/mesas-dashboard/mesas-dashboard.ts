@@ -5,7 +5,7 @@ import { MesaService } from '../../../services/mesa-service';
 import { CommonModule, AsyncPipe } from '@angular/common';
 import {RouterLink, RouterLinkActive} from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { showSuccessAlert, showErrorAlert } from '../../shared/alerts';
+import { NotificationService } from '../../../services/notification.service';
 
 @Component({
   selector: 'app-mesas-dashboard',
@@ -30,7 +30,7 @@ export class MesasDashboard implements OnInit {
     { field: 'activatedAt', header: 'Activada' }
   ];
 
-  constructor(private mesaService: MesaService, private fb: FormBuilder) {
+  constructor(private mesaService: MesaService, private fb: FormBuilder, private notificationService: NotificationService) {
     this.mesaForm = this.fb.group({
       number: ['', Validators.required],
       free: [true, Validators.required],
@@ -49,7 +49,7 @@ export class MesasDashboard implements OnInit {
       },
       error: (err) => {
         console.error('Error cargando mesas:', err);
-        showErrorAlert('No se pudieron cargar las mesas');
+        this.notificationService.error('No se pudieron cargar las mesas');
       }
     });
   }
@@ -61,13 +61,13 @@ export class MesasDashboard implements OnInit {
         next: (ok) => {
           if (ok) {
             this.loadMesas();
-            showSuccessAlert('Mesa eliminada correctamente');
+            this.notificationService.success('Mesa eliminada correctamente');
           } else {
-            showErrorAlert('No se pudo eliminar la mesa');
+            this.notificationService.error('No se pudo eliminar la mesa');
           }
         },
         error: (err) => {
-          showErrorAlert('No se pudo eliminar la mesa');
+          this.notificationService.error('No se pudo eliminar la mesa');
         }
       });
     }
@@ -108,10 +108,10 @@ export class MesasDashboard implements OnInit {
         next: () => {
           this.loadMesas();
           this.showForm = false;
-          showSuccessAlert('La mesa se registró correctamente');
+          this.notificationService.success('La mesa se registró correctamente');
         },
         error: (err) => {
-          showErrorAlert('No se pudo registrar la mesa');
+          this.notificationService.error('No se pudo registrar la mesa');
         }
       });
     } else if (this.actionType === 'edit' && this.selectedMesa) {
@@ -120,10 +120,10 @@ export class MesasDashboard implements OnInit {
         next: () => {
           this.loadMesas();
           this.showForm = false;
-          showSuccessAlert('La mesa se actualizó correctamente');
+          this.notificationService.success('La mesa se actualizó correctamente');
         },
         error: (err) => {
-          showErrorAlert('No se pudo actualizar la mesa');
+          this.notificationService.error('No se pudo actualizar la mesa');
         }
       });
     }

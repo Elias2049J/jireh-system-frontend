@@ -5,7 +5,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">
-          {{ actionType === 'add' ? 'Nuevo Producto' : 'Editar Producto' }}
+          @if (actionType() === 'add') { Nuevo Producto } @else { Editar Producto }
         </h5>
         <button type="button" class="btn-close" (click)="cancel()"></button>
       </div>
@@ -99,7 +99,7 @@
             }
           </div>
 
-          @if (actionType === 'edit') {
+          @if (actionType() === 'edit') {
             <div class="mb-3">
               <label for="available" class="form-label">Disponibilidad</label>
               <select
@@ -116,7 +116,7 @@
           <div class="d-flex justify-content-end gap-2">
             <button type="button" class="btn btn-secondary" (click)="cancel()">Cancelar</button>
             <button type="button" class="btn btn-primary" (click)="submit()" [disabled]="productForm.invalid">
-              {{ actionType === 'add' ? 'Registrar' : 'Actualizar' }}
+              @if (actionType() === 'add') { Registrar } @else { Actualizar }
             </button>
           </div>
         </form>

@@ -39,7 +39,6 @@ export class LoginPage implements OnInit {
       return;
     }
 
-    // Extraer datos del formulario
     const loginData = this.loginForm.value;
 
     console.log('Intentando iniciar sesión con:', loginData);
@@ -57,7 +56,6 @@ export class LoginPage implements OnInit {
             this.router.navigate(['/inventory']);
           });
         } else {
-          // Error message
           Swal.fire({
             title: 'Error',
             text: 'Credenciales incorrectas',
@@ -69,7 +67,6 @@ export class LoginPage implements OnInit {
       },
       error: (err) => {
         console.error('Error al iniciar sesión:', err);
-        // Error message
         Swal.fire({
           title: 'Error',
           text: 'Error al conectar con el servidor',

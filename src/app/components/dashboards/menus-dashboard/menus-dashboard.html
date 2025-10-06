@@ -111,37 +111,15 @@
                     }
                   } @else {
                     <tr>
-                      <td colspan="8" class="text-center py-4 text-muted">No hay productos disponibles</td>
+                      <td colspan="8" class="text-center text-muted py-3">No hay productos para mostrar</td>
                     </tr>
                   }
                 </tbody>
               </table>
             </div>
           }
-          <div class="d-flex justify-content-end mt-3">
-            @if (!showAllProducts) {
-              <button class="btn btn-success" (click)="handleProductAction('add')">Agregar</button>
-            }
-          </div>
         </div>
       </div>
     </div>
   </div>
-
-  <!-- Forms modales -->
-  @if (showForm) {
-    <app-menu-form (menuData)="onDataEntered($event)" (exitEvent)="showForm=false"></app-menu-form>
-  }
-  @if (showEditForm && editMenu) {
-    <app-menu-form [menu]="editMenu" (menuData)="onEditDataEntered($event)" (exitEvent)="showEditForm=false; editMenu=null"></app-menu-form>
-  }
-  @if (showProductForm) {
-    <app-product-form
-      [actionType]="productActionType"
-      [productData]="selectedProduct"
-      (dataEntered)="onProductFormSubmit($event)"
-      (cancelled)="showProductForm=false">
-    </app-product-form>
-  }
-  <app-options-dashboard></app-options-dashboard>
 </div>

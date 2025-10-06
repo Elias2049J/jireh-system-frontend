@@ -54,20 +54,19 @@
     </div>
   </div>
 
-  @if (showForm && actionType === 'add') {
+  @if (showForm() && formAction() === 'add') {
     <app-supply-form
       actionType="add"
       (dataEntered)="regSupply($event)"
-      (cancelled)="cancelAction()">
-    </app-supply-form>
+      (cancelled)="cancelAction()"
+    ></app-supply-form>
   }
-
-  @if (showForm && actionType === 'edit') {
+  @if (showForm() && formAction() === 'edit') {
     <app-supply-form
       actionType="edit"
-      [supplyData]="selectedSupply"
+      [supplyData]="selectedSupply()!"
       (dataEntered)="updateSupply($event)"
-      (cancelled)="cancelAction()">
-    </app-supply-form>
+      (cancelled)="cancelAction()"
+    ></app-supply-form>
   }
 </div>

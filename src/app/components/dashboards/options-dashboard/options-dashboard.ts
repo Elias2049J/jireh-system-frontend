@@ -3,7 +3,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ProductService } from '../../../services/product-service';
 import { OptionListDTO } from '../../../models/option-list.dto';
 import { OptionDTO } from '../../../models/option.dto';
-import { showSuccessAlert, showErrorAlert } from '../../shared/alerts';
+import { NotificationService } from '../../../services/notification.service';
 import {FormsModule} from '@angular/forms';
 import { Product } from '../../../models/product.model';
 
@@ -35,7 +35,8 @@ export class OptionsDashboard implements OnInit {
 
   constructor(
     private modalService: NgbModal,
-    private productService: ProductService
+    private productService: ProductService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit() {
@@ -93,7 +94,7 @@ export class OptionsDashboard implements OnInit {
       },
       error: err => {
         console.log(`No se pudo cargar los productos ${err}`);
-        showErrorAlert('Error al cargar los productos');
+        this.notificationService.error('Error al cargar los productos');
       }
     });
   }
@@ -101,11 +102,12 @@ export class OptionsDashboard implements OnInit {
   submitOptionGroup(modal: any) {
     this.productService.createOptionList(this.optionGroupDto as OptionListDTO).subscribe({
       next: () => {
-        showSuccessAlert('Grupo de opciones creado correctamente');
+        this.notificationService.success('Grupo de opciones creado correctamente');
+        this.loadOptionsGroups();
         modal.close();
       },
       error: (err) => {
-        showErrorAlert(`Error al crear grupo de opciones ${err}`);
+        this.notificationService.error(`Error al crear grupo de opciones ${err}`);
       }
     });
   }
@@ -113,11 +115,12 @@ export class OptionsDashboard implements OnInit {
   submitOption(modal: any) {
     this.productService.createOption(this.optionDto as OptionDTO).subscribe({
       next: () => {
-        showSuccessAlert('Opción creada correctamente');
+        this.notificationService.success('Opción creada correctamente');
+        this.loadOptions();
         modal.close();
       },
       error: (err) => {
-        showErrorAlert(`Error al crear opción ${err}`);
+        this.notificationService.error(`Error al crear opción ${err}`);
       }
     });
   }

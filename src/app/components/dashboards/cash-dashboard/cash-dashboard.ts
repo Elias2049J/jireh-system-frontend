@@ -5,6 +5,7 @@ import {CashService} from '../../../services/cash-service';
 import {AsyncPipe} from '@angular/common';
 import {SaleForm} from '../../forms/sale-form/sale-form';
 import {ReportService} from '../../../services/report-service';
+import { NotificationService } from '../../../services/notification.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -23,7 +24,8 @@ export class CashDashboard implements OnInit {
   }
 
   constructor(private cashService: CashService,
-              private reportService: ReportService) {
+              private reportService: ReportService,
+              private notificationService: NotificationService) {
   }
 
   private _sales = new BehaviorSubject<SaleModel[]>([]);
@@ -77,22 +79,11 @@ export class CashDashboard implements OnInit {
     this.cashService.openCash().subscribe({
       next: (response) => {
         console.info("Cash Open:", response);
-        Swal.fire({
-          title: '¡Caja Abierta!',
-          text: 'La caja ha sido abierta correctamente',
-          icon: 'success',
-          confirmButtonText: 'Aceptar',
-          confirmButtonColor: '#198754'
-        });
+        this.notificationService.success('La caja ha sido abierta correctamente');
       },
       error: (err) => {
         console.error("Error opening cash", err);
-        Swal.fire({
-          title: 'Error',
-          text: 'No se pudo abrir la caja. Por favor, intente de nuevo.',
-          icon: 'error',
-          confirmButtonText: 'Aceptar'
-        });
+        this.notificationService.error('No se pudo abrir la caja. Por favor, intente de nuevo.');
       }
     });
   }

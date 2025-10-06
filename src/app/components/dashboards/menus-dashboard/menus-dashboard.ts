@@ -6,7 +6,7 @@ import {CommonModule} from '@angular/common';
 import {Menu, PrintArea} from '../../../models/menu.model';
 import {Product, ProductSubType, ProductType} from '../../../models/product.model';
 import {BehaviorSubject} from 'rxjs';
-import { showSuccessAlert, showErrorAlert } from '../../shared/alerts';
+import { NotificationService } from '../../../services/notification.service';
 import { ProductService } from '../../../services/product-service';
 import { AsyncPipe } from '@angular/common';
 import {FormsModule} from '@angular/forms';
@@ -42,7 +42,8 @@ export class MenusDashboard implements OnInit {
   constructor(
     private menuService: MenuService,
     private productService: ProductService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(){
@@ -91,16 +92,13 @@ export class MenusDashboard implements OnInit {
     this.menuService.update(updatedMenu).subscribe({
       next: (result) => {
         console.log(`Menu actualizado: ${result}`)
-        showSuccessAlert('Menú actualizado correctamente');
+        this.notificationService.success('Menú actualizado correctamente');
         this.showEditForm = false;
         this.editMenu = null;
         this.loadMenus();
       },
       error: (err) => {
         console.error(`Error actualizando menu: ${err}`);
-        showErrorAlert('Error al actualizar el menú');
-        this.showEditForm = false;
-        this.editMenu = null;
       }
     });
   }
@@ -129,7 +127,7 @@ export class MenusDashboard implements OnInit {
         this.allProducts.set([]);
         this.filteredProducts.set([]);
         this.isLoading.set(false);
-        showErrorAlert('No se pudieron cargar los productos del menú');
+        this.notificationService.error('No se pudieron cargar los productos del menú');
       }
     });
   }
@@ -152,7 +150,7 @@ export class MenusDashboard implements OnInit {
         this.allProducts.set([]);
         this.filteredProducts.set([]);
         this.isLoading.set(false);
-        showErrorAlert('Error al obtener los productos');
+        this.notificationService.error('Error al obtener los productos');
       }
     });
   }
@@ -194,7 +192,7 @@ export class MenusDashboard implements OnInit {
       },
       error: (err) => {
         console.error('Error creating product', err);
-        showErrorAlert('Error al crear producto');
+        this.notificationService.error('Error al crear producto');
       }
     });
   }
@@ -214,19 +212,17 @@ export class MenusDashboard implements OnInit {
       available: productData['available'] !== undefined ? productData['available'] : this.selectedProduct.available,
       type: productData['type'] || this.selectedProduct.type,
       productType: productData['productType'] || this.selectedProduct.productType,
-
       optionLists: productData['optionLists'] || this.selectedProduct.optionLists || []
     };
-
     this.productService.update(updated).subscribe({
       next: () => {
-        showSuccessAlert('Producto actualizado correctamente');
+        this.notificationService.success('Producto actualizado correctamente');
         if (this.showAllProducts) this.onShowAllProducts(); else if (this.selectedMenu) this.selectMenu(this.selectedMenu);
         this.selectedProduct = null;
       },
       error: (err) => {
         console.error('Error updating product', err);
-        showErrorAlert('Error al actualizar producto');
+        this.notificationService.error('Error al actualizar producto');
       }
     });
   }
@@ -246,12 +242,12 @@ export class MenusDashboard implements OnInit {
       if (result.isConfirmed) {
         this.productService.delete(item.idProduct).subscribe({
           next: () => {
-            showSuccessAlert('Producto eliminado correctamente');
+            this.notificationService.success('Producto eliminado correctamente');
             if (this.showAllProducts) this.onShowAllProducts(); else if (this.selectedMenu) this.selectMenu(this.selectedMenu);
           },
           error: (err) => {
             console.error('Error al eliminar producto', err);
-            showErrorAlert('Error al eliminar el producto');
+            this.notificationService.error('Error al eliminar el producto');
           }
         });
       }
@@ -297,7 +293,7 @@ export class MenusDashboard implements OnInit {
       error: (err) => {
         console.error('Error searching products:', err);
         this.isLoading.set(false);
-        showErrorAlert('Error buscando productos');
+        this.notificationService.error('Error buscando productos');
       }
     });
   }
@@ -333,7 +329,7 @@ export class MenusDashboard implements OnInit {
         this.menuService.delete(menu.idMenu!).subscribe({
           next: (ok) => {
             if (ok) {
-              showSuccessAlert('Menú eliminado correctamente');
+              this.notificationService.success('Menú eliminado correctamente');
               this.loadMenus();
               // limpiar selección y productos mostrados
               this.selectedMenu = null;
@@ -341,12 +337,12 @@ export class MenusDashboard implements OnInit {
               this.filteredProducts.set([]);
               this.showAllProducts = false;
             } else {
-              showErrorAlert('No se pudo eliminar el menú');
+              this.notificationService.error('No se pudo eliminar el menú');
             }
           },
           error: (err) => {
             console.error('Error deleting menu', err);
-            showErrorAlert('Error al eliminar el menú');
+            this.notificationService.error('Error al eliminar el menú');
           }
         });
       }
