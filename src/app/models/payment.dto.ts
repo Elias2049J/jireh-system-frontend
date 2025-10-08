@@ -12,8 +12,7 @@ export class PaymentDTO {
     public dateTime: string | null,
     public paymentMethod : PaymentMethod,
     public amount: number | null,
-    public  idVoucher: number | null,
-    public items: number[] | null
+    public  idVoucher: number | null
   ) {
   }
 }

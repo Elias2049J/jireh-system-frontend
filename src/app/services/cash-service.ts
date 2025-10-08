@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
-import { SaleModel } from '../models/sale.model';
 import { ReportService } from './report-service';
 import {ApiUrl} from '../models/ApiUrl';
+import {PaymentDTO} from '../models/payment.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -16,16 +16,12 @@ export class CashService {
     private reportService: ReportService
   ) {}
 
-  getAllSales(): Observable<SaleModel[]> {
-    return this.http.get<SaleModel[]>(`${this.apiUrl}`);
+  getAllSales(): Observable<PaymentDTO[]> {
+    return this.http.get<PaymentDTO[]>(`${this.apiUrl}`);
   }
 
-  getTodaySales(): Observable<SaleModel[]> {
-    return this.http.get<SaleModel[]>(`${this.apiUrl}/ventas_hoy`);
-  }
-
-  registerSale(sale: SaleModel): Observable<boolean> {
-    return this.http.post<boolean>(`${this.apiUrl}/registrar_venta`, sale);
+  getTodaySales(): Observable<PaymentDTO[]> {
+    return this.http.get<PaymentDTO[]>(`${this.apiUrl}/ventas_hoy`);
   }
 
   openCash(): Observable<boolean> {
