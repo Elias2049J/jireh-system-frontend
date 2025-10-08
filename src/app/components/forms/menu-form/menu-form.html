@@ -40,6 +40,27 @@
             </select>
           </div>
 
+          <div class="mb-3">
+            <label for="takeAwaySurcharge" class="form-label">Recargo para llevar</label>
+            <div class="input-group">
+              <span class="input-group-text">S/</span>
+              <input
+                class="form-control"
+                id="takeAwaySurcharge"
+                type="number"
+                min="0"
+                formControlName="takeAwaySurcharge"
+                placeholder="Recargo para llevar"
+              >
+            </div>
+            @if (menuForm.controls['takeAwaySurcharge'].hasError('required') && menuForm.controls['takeAwaySurcharge'].touched) {
+              <div class="invalid-feedback">El recargo es obligatorio</div>
+            }
+            @if (menuForm.controls['takeAwaySurcharge'].hasError('min')) {
+              <div class="invalid-feedback">El recargo no puede ser negativo</div>
+            }
+          </div>
+
           <div class="d-flex justify-content-end gap-2 mt-4">
             <button type="button" class="btn btn-secondary" (click)="emitExitEvent()">Cancelar</button>
             <button type="button" class="btn btn-primary" (click)="emitData()" [disabled]="menuForm.invalid">

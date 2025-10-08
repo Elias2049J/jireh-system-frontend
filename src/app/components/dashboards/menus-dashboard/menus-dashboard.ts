@@ -5,23 +5,20 @@ import {ProductForm} from '../../forms/product-form/product-form';
 import {CommonModule} from '@angular/common';
 import {Menu, PrintArea} from '../../../models/menu.model';
 import {Product, ProductSubType, ProductType} from '../../../models/product.model';
-import {BehaviorSubject} from 'rxjs';
 import { NotificationService } from '../../../services/notification.service';
 import { ProductService } from '../../../services/product-service';
-import { AsyncPipe } from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import Swal from 'sweetalert2';
 import {OptionsDashboard} from '../options-dashboard/options-dashboard';
 
 @Component({
   selector: 'app-menus-dashboard',
-  imports: [MenuForm, ProductForm, CommonModule, AsyncPipe, FormsModule, OptionsDashboard],
+  imports: [MenuForm, ProductForm, CommonModule, FormsModule, OptionsDashboard],
   templateUrl: './menus-dashboard.html',
   styleUrl: './menus-dashboard.scss'
 })
 export class MenusDashboard implements OnInit {
-  private _menus = new BehaviorSubject<Menu[]>([]);
-  menus$ = this._menus.asObservable();
+  menus = signal<Menu[]>([]);
 
   // signals
   isLoading: WritableSignal<boolean> = signal(false);
@@ -31,12 +28,14 @@ export class MenusDashboard implements OnInit {
   showForm: boolean = false;
   showProductForm: boolean = false;
   productActionType: 'add' | 'edit' | null = null;
+  showMenuForm: boolean = false;
   selectedProduct: Product | null = null;
   editMenu: Menu | null = null;
   showEditForm: boolean = false;
   showAllProducts: boolean = false;
   searchTerm: string = '';
   selectedMenu: Menu | null = null;
+  menuActionType: 'add' | 'edit' | null = null;
 
   constructor(
     private menuService: MenuService,
@@ -53,7 +52,7 @@ export class MenusDashboard implements OnInit {
   loadMenus(): void{
     this.menuService.getAll().subscribe({
       next: (data) => {
-        this._menus.next(data);
+        this.menus.set(data);
         console.log('Received menus:', data);
       },
       error: (err) => {
@@ -67,7 +66,8 @@ export class MenusDashboard implements OnInit {
     const newMenu: Menu = {
       idMenu: null,
       name: menuData['name'],
-      printArea: PrintArea[menuData['preparationArea'] as keyof typeof PrintArea]
+      printArea: PrintArea[menuData['preparationArea'] as keyof typeof PrintArea],
+      takeAwaySurcharge: menuData['takeAwaySurcharge']
     };
     console.log(newMenu);
     this.menuService.create(newMenu).subscribe({
@@ -263,6 +263,48 @@ export class MenusDashboard implements OnInit {
     } else if (this.productActionType === 'edit') {
       this.updateProduct(productData);
     }
+  }
+
+  handleMenuAction(action: 'add' | 'edit', menu?: Menu) {
+    this.menuActionType = action;
+    this.showMenuForm = true;
+    if (action === 'add') {
+      this.selectedMenu = null;
+    } else if (action === 'edit' && menu) {
+      this.selectedMenu = menu;
+    }
+  }
+
+  onMenuFormSubmit(menuData: {[key: string]: any}) {
+    this.showMenuForm = false;
+    if (this.menuActionType === 'add') {
+      const newMenu: Menu = {
+        idMenu: null,
+        name: menuData['name'],
+        printArea: menuData['preparationArea'],
+        takeAwaySurcharge: menuData['takeAwaySurcharge']
+      };
+      this.menuService.create(newMenu).subscribe({
+        next: () => this.loadMenus(),
+        error: () => this.notificationService.error('Error creando menú')
+      });
+    } else if (this.menuActionType === 'edit' && this.selectedMenu) {
+      const updatedMenu: Menu = {
+        ...this.selectedMenu,
+        name: menuData['name'],
+        printArea: menuData['preparationArea'],
+        takeAwaySurcharge: menuData['takeAwaySurcharge']
+      };
+      this.menuService.update(updatedMenu).subscribe({
+        next: () => {
+          this.notificationService.success('Menú actualizado correctamente');
+          this.loadMenus();
+        },
+        error: () => this.notificationService.error('Error actualizando menú')
+      });
+    }
+    this.menuActionType = null;
+    this.selectedMenu = null;
   }
 
   onSearchTermChange(term: string) {

@@ -11,6 +11,7 @@ import {CommonModule} from "@angular/common";
   templateUrl: './menu-form.html'
 })
 export class MenuForm implements OnInit {
+  @Input() actionType: any = null;
   @Input() menu: any = null;
   @Output() exitEvent = new EventEmitter<void>();
   @Output() menuData = new EventEmitter<{[key: string]: any}>();
@@ -25,7 +26,8 @@ export class MenuForm implements OnInit {
         Validators.maxLength(20),
         Validators.pattern(/^[a-zA-Z\s]+$/)
       ]],
-      preparationArea: ['COCINA', Validators.required]
+      preparationArea: ['COCINA', Validators.required],
+      takeAwaySurcharge: [0, [Validators.required, Validators.min(0)]]
     });
   }
 
@@ -33,7 +35,8 @@ export class MenuForm implements OnInit {
     if (this.menu) {
       this.menuForm.patchValue({
         name: this.menu.name,
-        preparationArea: this.menu.printArea
+        preparationArea: this.menu.printArea,
+        takeAwaySurcharge: this.menu.takeAwaySurcharge ?? 0
       });
     }
   }

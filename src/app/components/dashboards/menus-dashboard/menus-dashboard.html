@@ -15,22 +15,18 @@
         <table class="table table-hover align-middle mb-0">
           <thead class="table-light">
           <tr>
-            <th>ID</th>
             <th>Nombre</th>
             <th>Área</th>
-            <th></th>
+            <th>Rec. Llevar</th>
           </tr>
           </thead>
           <tbody>
-            @if (menus$ | async; as menus) {
-              @for (menu of menus; track menu.idMenu) {
+            @if (menus()) {
+              @for (menu of menus(); track menu.idMenu) {
                 <tr [class.table-active]="selectedMenu?.idMenu === menu.idMenu" (click)="selectMenu(menu)" style="cursor:pointer;">
-                  <td>
-                    <span class="badge rounded-pill" [ngClass]="{ 'bg-primary': selectedMenu?.idMenu === menu.idMenu, 'text-dark': selectedMenu?.idMenu !== menu.idMenu }">{{ menu.idMenu }}</span>
-                  </td>
                   <td class="fw-bold">{{ menu.name }}</td>
                   <td><small class="text-muted">{{ menu.printArea }}</small></td>
-                  <td></td>
+                  <td><small class="text-muted">{{ menu.takeAwaySurcharge | currency:'S/': 'symbol':'1.2-2' }}</small></td>
                 </tr>
               }
             } @else {
@@ -43,8 +39,8 @@
       </div>
 
       <div class="mt-3 d-flex gap-2">
-        <button class="btn btn-outline-success flex-fill" (click)="showForm = true">Nuevo</button>
-        <button class="btn btn-outline-primary flex-fill" (click)="loadMenus()">Actualizar</button>
+        <button class="btn btn-outline-success flex-fill" (click)="handleMenuAction('add')">Nuevo</button>
+        <button class="btn btn-outline-primary flex-fill" [disabled]="!selectedMenu" (click)="handleMenuAction('edit', selectedMenu!)">Editar</button>
         <button class="btn btn-outline-danger flex-fill" (click)="deleteSelectedMenu()">Eliminar</button>
       </div>
     </div>
@@ -84,7 +80,6 @@
                   <th>Prefijo</th>
                   <th>Precio</th>
                   <th>Disponible</th>
-                  <th>Tipo</th>
                   <th>Acciones</th>
                 </tr>
                 </thead>
@@ -98,7 +93,6 @@
                         <td>{{ prod.prefix }}</td>
                         <td>{{ prod.price | currency:'S/':'symbol':'1.2-2' }}</td>
                         <td>{{ prod.available ? 'Sí' : 'No' }}</td>
-                        <td>{{ prod.type }}</td>
                         <td>
                           <button class="btn btn-sm btn-outline-secondary me-2" (click)="handleProductAction('edit', prod)">
                             <i class="bi bi-pencil-square"></i>
@@ -129,11 +123,12 @@
   </div>
 
   <!-- Forms modales -->
-  @if (showForm) {
-    <app-menu-form (menuData)="onDataEntered($event)" (exitEvent)="showForm=false"></app-menu-form>
-  }
-  @if (showEditForm && editMenu) {
-    <app-menu-form [menu]="editMenu" (menuData)="onEditDataEntered($event)" (exitEvent)="showEditForm=false; editMenu=null"></app-menu-form>
+  @if (showMenuForm) {
+    <app-menu-form
+      [menu]="menuActionType === 'edit' ? selectedMenu : null"
+      (menuData)="onMenuFormSubmit($event)"
+      (exitEvent)="showMenuForm=false; menuActionType=null; selectedMenu=null">
+    </app-menu-form>
   }
   @if (showProductForm) {
     <app-product-form

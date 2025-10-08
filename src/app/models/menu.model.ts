@@ -8,6 +8,7 @@ export class Menu {
   constructor(
     public idMenu: number | null,
     public name: string,
-    public printArea: PrintArea | null
+    public printArea: PrintArea | null,
+    public takeAwaySurcharge: number | null
   ) {}
 }
