@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
 import { MesaDTO } from '../../../models/mesa.dto';
 import { MesaService } from '../../../services/mesa-service';
-import { CommonModule, AsyncPipe } from '@angular/common';
-import {RouterLink, RouterLinkActive} from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NotificationService } from '../../../services/notification.service';
 import { signal } from '@angular/core';
@@ -11,7 +9,7 @@ import { signal } from '@angular/core';
 @Component({
   selector: 'app-mesas-dashboard',
   standalone: true,
-  imports: [CommonModule, AsyncPipe, RouterLink, RouterLinkActive, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './mesas-dashboard.html',
   styleUrl: './mesas-dashboard.scss'
 })
