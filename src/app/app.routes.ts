@@ -6,6 +6,7 @@ import { UserDashboard } from './components/dashboards/user-dashboard/user-dashb
 import { CashDashboard } from './components/dashboards/cash-dashboard/cash-dashboard';
 import { AdminGuard } from './guards/admin.guard';
 import { MesasDashboard } from './components/dashboards/mesas-dashboard/mesas-dashboard';
+import { Reports } from './components/dashboards/reports/reports';
 
 export const routes: Routes = [
   { path: 'login', component: LoginPage },
@@ -14,5 +15,6 @@ export const routes: Routes = [
   { path: 'menus', component: MenusDashboard, canActivate: [AdminGuard] },
   { path: 'users', component: UserDashboard, canActivate: [AdminGuard] },
   { path: 'cash', component: CashDashboard, canActivate: [AdminGuard] },
-  { path: 'mesas', component: MesasDashboard, canActivate: [AdminGuard] }
+  { path: 'mesas', component: MesasDashboard, canActivate: [AdminGuard] },
+  { path: 'reportes', component: Reports, canActivate: [AdminGuard] }
 ];
