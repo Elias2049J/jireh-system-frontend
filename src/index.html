@@ -6,6 +6,16 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <!-- Fuerza modo navegador -->
+  <script>
+    window.global = window;
+    delete window.process;
+    delete window.require;
+  </script>
+
+  <!-- Stimulsoft desde CDN (sin bundling, sin require) -->
+  <script src="https://cdn.jsdelivr.net/npm/stimulsoft-reports-js/Scripts/stimulsoft.reports.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/stimulsoft-dashboards-js/Scripts/stimulsoft.dashboards.js"></script>
 </head>
 <body>
   <app-root></app-root>

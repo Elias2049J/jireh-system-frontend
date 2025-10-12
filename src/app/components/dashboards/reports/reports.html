@@ -1,1 +1,64 @@
-<p>reports works!</p>
+<div class="toolbar">
+  <div class="range">
+    <label>Desde <input type="date" [(ngModel)]="desde" (change)="cargar()"></label>
+    <label>Hasta <input type="date" [(ngModel)]="hasta" (change)="cargar()"></label>
+  </div>
+</div>
+
+<div *ngIf="loading" class="loading">Cargando…</div>
+<div *ngIf="error" class="error">{{ error }}</div>
+
+<div class="grid" *ngIf="!loading && !error">
+  <!-- KPI Promedio -->
+  <div class="card kpi">
+    <button class="btn-xlsx" (click)="exportXlsx('PromPlatSell')">XLSX</button>
+    <div class="kpi-title">Promedio de platos vendidos</div>
+    <div class="kpi-value">{{ kpiProm }}</div>
+  </div>
+
+  <!-- KPI Ganancias -->
+  <div class="card kpi">
+    <button class="btn-xlsx" (click)="exportXlsx('GananciasTot')">XLSX</button>
+    <div class="kpi-title">Total Ganancias</div>
+    <div class="kpi-value">{{ kpiMon }} {{ kpiGan | number:'1.0-0' }}</div>
+  </div>
+
+  <!-- Top vendidos -->
+  <div class="card">
+    <button class="btn-xlsx" (click)="exportXlsx('ProdMoreSell')">XLSX</button>
+    <h4>Productos más vendidos</h4>
+    <div class="chart">
+      <canvas baseChart
+        [data]="topVendidosCfg.data"
+        [options]="chartOpts"
+        [type]="'bar'">
+      </canvas>
+    </div>
+  </div>
+
+  <!-- Ganancias por día -->
+  <div class="card">
+    <button class="btn-xlsx" (click)="exportXlsx('GananciasDay')">XLSX</button>
+    <h4>Ganancias por día</h4>
+    <div class="chart">
+      <canvas baseChart
+        [data]="ventasDiaCfg.data"
+        [options]="chartOpts"
+        [type]="'line'">
+      </canvas>
+    </div>
+  </div>
+
+  <!-- Más consumidos -->
+  <div class="card">
+    <button class="btn-xlsx" (click)="exportXlsx('ProdMoreCons')">XLSX</button>
+    <h4>Productos más consumidos</h4>
+    <div class="chart">
+      <canvas baseChart
+        [data]="topConsCfg.data"
+        [options]="chartOpts"
+        [type]="'bar'">
+      </canvas>
+    </div>
+  </div>
+</div>
