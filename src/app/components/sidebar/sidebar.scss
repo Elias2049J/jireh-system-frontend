@@ -1,0 +1,80 @@
+/* Sidebar (scopea si este SCSS es del componente) */
+nav.bg-dark {
+  // Paleta
+  $sidebar-bg:    #0f172a; // oscuro
+  $link-color:    #e5e7eb; // texto claro
+  $hover-bg:      rgba(255, 255, 255, 0.08);
+  $active-bg:     rgba(59, 130, 246, 0.18); // azul suave translúcido
+  $active-color:  #93c5fd; // azul claro para texto/icono
+
+  background-color: $sidebar-bg;
+
+  .nav-link {
+    display: block;
+    color: $link-color !important;
+    border-radius: .5rem;
+    margin: .25rem .5rem;            // separa un poco cada opción
+    transition: background-color .2s ease, color .2s ease, transform .08s ease;
+    position: relative;
+
+    &:hover {
+      background-color: $hover-bg;
+      text-decoration: none;
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 .2rem rgba(59, 130, 246, 0.35);
+    }
+
+    // Estado activo (Angular agrega .active con routerLinkActive)
+    &.active,
+    &[aria-current="page"] {
+      background-color: $active-bg;
+      color: $active-color !important;
+      font-weight: 600;
+
+      // Barra izquierda como acento visual
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 8px;
+        bottom: 8px;
+        width: 4px;
+        border-radius: 4px;
+        background: linear-gradient(180deg, #60a5fa, #3b82f6);
+      }
+    }
+
+    // Micro feedback al click/tap
+    &:active {
+      transform: scale(0.99);
+    }
+  }
+
+  // Centrado ya lo tienes, opcionalmente suaviza separadores
+  .border-secondary {
+    border-color: rgba(255, 255, 255, 0.15) !important;
+  }
+
+  // Botón “Cerrar Sesión” opcional (match con el tema)
+  button {
+    background: transparent;
+    color: $link-color;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: .5rem;
+    padding: .5rem .75rem;
+    transition: background-color .2s ease, border-color .2s ease;
+
+    &:hover {
+      background-color: $hover-bg;
+      border-color: rgba(255, 255, 255, 0.35);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 .2rem rgba(59, 130, 246, 0.35);
+    }
+  }
+}
