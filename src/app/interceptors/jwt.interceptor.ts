@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
 
 @Injectable()
@@ -9,7 +10,7 @@ export class JwtInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // Exclude login-page route from interception
-    if (request.url.includes('/auth/login-page')) {
+    if (this.isPublic(request.url)) {
       return next.handle(request);
     }
 
@@ -25,7 +26,21 @@ export class JwtInterceptor implements HttpInterceptor {
       });
     }
 
-    // Pass the request to the next handler
-    return next.handle(request);
+    return next.handle(request).pipe(
+      catchError((err: HttpErrorResponse) => {
+        if (err.status === 401) {
+          // Logtout when the token expires
+          this.authService.logout();
+        }
+        return throwError(() => err);
+      })
+    );    
+  }
+
+  private isPublic(url: string): boolean {
+    return url.includes('/auth/login-page')
+        || url.includes('/auth/login')
+        || url.includes('/health')
+        || url.includes('/actuator/health');
   }
 }
